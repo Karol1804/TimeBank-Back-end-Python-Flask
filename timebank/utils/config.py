@@ -14,12 +14,13 @@ class Config(object):
 
     CORS_HEADERS = 'Content-Type'
 
-    DB_HOST = 'localhost'
+    DB_HOST = '157.245.27.101'  # Testing
+    # DB_HOST = '157.230.79.85'  # Production
     DB_PORT = '33306'
     DB_NAME = "timebank"
     DB_USERNAME = "automation"
-    # DB_PASSWORD = "Fej1chahgheebohxohxi"  # Production
     DB_PASSWORD = "ue1roo0uawechai5nieg1B"  # Testing
+    # DB_PASSWORD = "Fej1chahgheebohxohxi"  # Production
     DB_CHARSET = "utf8mb4"
 
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:" \
