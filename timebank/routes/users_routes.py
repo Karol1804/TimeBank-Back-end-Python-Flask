@@ -34,8 +34,6 @@ def api_users():
 
 @app.route('/api/v1/user/<user_id>', methods=['GET'])
 def api_single_user_get(user_id):
-    if not user_id and type(user_id) is int and 0 < user_id:
-        return '', 400
 
     db_query = db.session.query(User)
     obj = db_query.get(user_id)
