@@ -34,6 +34,8 @@ def api_users():
 
 @app.route('/api/v1/user/<user_id>', methods=['GET'])
 def api_single_user_get(user_id):
+    if not user_id and type(user_id) is int and 0 < user_id:
+        return '', 400
 
     db_query = db.session.query(User)
     obj = db_query.get(user_id)
@@ -41,12 +43,12 @@ def api_single_user_get(user_id):
     if not obj:
         return '', 404
 
-    response_obj = dict(
+    response_obj = [dict(
         id=obj.id,
         phone=obj.phone,
         user_name=obj.user_name,
         time_account=obj.time_account,
-    )
+    )]
 
     response = jsonify(response_obj)
     return response, 200

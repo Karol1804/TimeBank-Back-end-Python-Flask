@@ -49,7 +49,7 @@ def api_single_registerservice_get(serviceregister_id):
     if not obj:
         return '', 404
 
-    response_obj = dict(
+    response_obj = [dict(
         id=obj.id,
         Service=dict(
             id=obj.Service.id,
@@ -64,7 +64,7 @@ def api_single_registerservice_get(serviceregister_id):
         hours=obj.hours,
         service_status=obj.service_status.name,
         end_time=obj.end_time
-    )
+    )]
 
     response = jsonify(response_obj)
     return response, 200

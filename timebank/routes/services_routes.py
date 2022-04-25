@@ -34,14 +34,13 @@ def api_services():
 
 @app.route('/api/v1/service/<services_id>', methods=['GET'])
 def api_single_service_get(services_id):
-
     db_query = db.session.query(Service)
     obj = db_query.get(services_id)
 
     if not obj:
         return '', 404
 
-    response_obj = dict(
+    response_obj = [dict(
         id=obj.id,
         title=obj.title,
         User=dict(
@@ -50,7 +49,7 @@ def api_single_service_get(services_id):
             user_name=obj.User.user_name,
             time_account=obj.User.time_account,
         ),
-    )
+    )]
 
     response = jsonify(response_obj)
     return response, 200
