@@ -274,7 +274,8 @@ def api_single_user_profile():
 def refresh():
     # Get_jwt_identity je funckia ktora vrati identitu JWT-tokenu. Ak nenajde ziadnu vrati None.
     current_user = get_jwt_identity()
-    # Create_access_token je funkcia ktora vytvara JWT-token. V nasom pripade len aktualizuje konkretnemu pouzivatelovy jeho aktualny token. Da sa tam nastavit aj expiracia.
+    # Create_access_token je funkcia ktora vytvara JWT-token. V nasom pripade len aktualizuje konkretnemu pouzivatelovy
+    # jeho aktualny token. Da sa tam nastavit aj expiracia.
     access_token = create_access_token(identity=current_user)
 
     resp = jsonify({'refresh': True})
