@@ -49,10 +49,10 @@ sql4 = "CREATE TABLE Serviceregister" \
 mycursor.execute(sql4)
 
 sql5 = "INSERT INTO User (phone, user_name, time_account)" \
-       "VALUES ('+421 905 111222', 'Obi-wan Kenobi', '1');"
+       "VALUES ('+421 905 111222', 'Obi-wan Kenobi', '0');"
 
 sql6 = "INSERT INTO User (phone, user_name, time_account)"\
-       "VALUES ('+421 905 333444', 'Darth Vader', '1');"
+       "VALUES ('+421 905 333444', 'Darth Vader', '0');"
 
 sql7 = "INSERT INTO Service (title, user_id)" \
        "VALUES ('Pokosim travnik', '1');"
