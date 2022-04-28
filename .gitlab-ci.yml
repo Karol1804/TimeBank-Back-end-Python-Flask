@@ -1,7 +1,6 @@
 stages:          # List of stages for jobs, and their order of execution
-  - build1
+  - build
   - deploy
-  - build2
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
@@ -22,4 +21,3 @@ deploy-job:      # This job runs in the deploy stage.
   script:
     - echo "Deploying application..."
     - echo "Application successfully deployed."
-
