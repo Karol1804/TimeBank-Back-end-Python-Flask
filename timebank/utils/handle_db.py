@@ -22,7 +22,7 @@ sql2 = "CREATE TABLE User" \
        "password VARCHAR(200)," \
        "user_name VARCHAR(30) NOT NULL," \
        "time_account INT NOT NULL," \
-       "UNIQUE (phone), UNIQUE (user_name));"
+       "UNIQUE (phone));"
 
 mycursor.execute(sql2)
 
@@ -30,7 +30,9 @@ sql3 = "CREATE TABLE Service" \
        "(id INT PRIMARY KEY AUTO_INCREMENT," \
        "title VARCHAR(200) NOT NULL," \
        "user_id INT NOT NULL," \
-       "CONSTRAINT `fk_service_user`FOREIGN KEY (user_id) REFERENCES User (id) ON DELETE CASCADE ON UPDATE RESTRICT);"
+       "CONSTRAINT `fk_service_user`FOREIGN KEY (user_id) REFERENCES User (id) ON DELETE CASCADE ON UPDATE RESTRICT," \
+       "estimate INT," \
+       "avg_rating INT);"
 
 mycursor.execute(sql3)
 
@@ -44,7 +46,8 @@ sql4 = "CREATE TABLE Serviceregister" \
        "REFERENCES User (id) ON DELETE CASCADE ON UPDATE RESTRICT," \
        "hours INT," \
        "service_status ENUM ('inprogress','ended') NOT NULL," \
-       "end_time DATE);"
+       "end_time DATE," \
+       "rating INT);"
 
 mycursor.execute(sql4)
 
