@@ -6,7 +6,7 @@ stages:          # List of stages for jobs, and their order of execution
 build1:       # This job runs in the build stage, which runs first.
   stage: build1
   tags:
-    - docker
+    - python
   script:
     - echo "Compiling the code..."
     - echo "Compile complete."
