@@ -13,12 +13,16 @@ build1:       # This job runs in the build stage, which runs first.
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  tags:
+    - python
   script:
     - echo "Deploying application..."
     - echo "Application successfully deployed."
 
 build2:       # This job runs in the build stage, which runs first.
   stage: build2
+  tags:
+    - python
   script:
     - echo "Compiling the code..."
     - echo "Compile complete."
