@@ -11,28 +11,20 @@ class Config(object):
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
     JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN-REFRESH"
-
     CORS_HEADERS = 'Content-Type'
-
-    DB_HOST = '157.245.27.101'  # Testing
-    # DB_HOST = '157.230.79.85'  # Production
-    DB_PORT = '33306'
-    DB_NAME = "timebank"
-    DB_USERNAME = "automation"
-    DB_PASSWORD = "ue1roo0uawechai5nieg1B"  # Testing
-    # DB_PASSWORD = "Fej1chahgheebohxohxi"  # Production
-    DB_CHARSET = "utf8mb4"
-
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:" \
-                              f"{DB_PORT}/{DB_NAME}?charset={DB_CHARSET}"
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
     SESSION_COOKIE_SECURE = True
 
 
 class ProductionConfig(Config):
-    pass
+    DB_HOST = '157.230.79.85'
+    DB_PASSWORD = "Fej1chahgheebohxohxi"
+    DB_PORT = '33306'
+    DB_NAME = "timebank"
+    DB_USERNAME = "automation"
+    DB_CHARSET = "utf8mb4"
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:" \
+                              f"{DB_PORT}/{DB_NAME}?charset={DB_CHARSET}"
 
 
 class DevelopmentConfig(Config):
@@ -41,3 +33,11 @@ class DevelopmentConfig(Config):
     JWT_COOKIE_SECURE = False
     JWT_COOKIE_CSRF_PROTECT = False
     TESTING = True
+    DB_HOST = '157.245.27.101'
+    DB_PASSWORD = "ue1roo0uawechai5nieg1B"
+    DB_PORT = '33306'
+    DB_NAME = "timebank"
+    DB_USERNAME = "automation"
+    DB_CHARSET = "utf8mb4"
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:" \
+                              f"{DB_PORT}/{DB_NAME}?charset={DB_CHARSET}"

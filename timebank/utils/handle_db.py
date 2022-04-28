@@ -1,13 +1,13 @@
 import mysql.connector
 
 mydb = mysql.connector.connect(
-  host="157.245.27.101",  # Testing
-  # host="157.230.79.85",  # Production
-  port='33306',
-  user="automation",
-  password="ue1roo0uawechai5nieg1B",  # Testing
-  # password="Fej1chahgheebohxohxi",  # Production
-  database="timebank"
+       host="157.245.27.101",  # Testing
+       # host="157.230.79.85",  # Production
+       port='33306',
+       user="automation",
+       password="ue1roo0uawechai5nieg1B",  # Testing
+       # password="Fej1chahgheebohxohxi",  # Production
+       database="timebank"
 )
 
 mycursor = mydb.cursor()
