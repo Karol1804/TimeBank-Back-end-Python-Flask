@@ -16,7 +16,7 @@ build-job:       # This job runs in the build stage, which runs first.
     paths:
       - ./timebank
       - ./run.py
-      - ./requirements.py
+      - ./requirements.txt
   only:
     - main
 
