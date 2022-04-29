@@ -33,3 +33,4 @@ deploy-job:
   script:
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd ~; touch test.txt"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation; touch default.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
