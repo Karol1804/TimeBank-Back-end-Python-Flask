@@ -12,7 +12,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - mkdir python
     - mv timebank python/timebank
     - cd python
-    - zip -r python.zip
+    - zip -r public.zip public
   artifacts:
     paths:
 #      - ./timebank
