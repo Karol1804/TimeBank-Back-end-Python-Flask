@@ -48,8 +48,7 @@ deploy-job2:
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
-  when:
-    - manual
+  when: manual
   script:
     - scp -o StrictHostKeyChecking=no public.zip automation@157.230.79.85:/home/automation/timebank_app
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "pkill python3"
