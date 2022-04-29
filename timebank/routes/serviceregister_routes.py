@@ -1,4 +1,7 @@
 import datetime
+from math import ceil
+from statistics import mean
+
 from flask import request, jsonify
 from sqlalchemy.exc import IntegrityError
 from timebank.models.serviceregister_model import Serviceregister
@@ -205,7 +208,7 @@ def api_single_serviceregister_finish(serviceregister_id, hours):
 
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
-def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating):
+def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
     try:
         is_number(serviceregister_id)
     except ValidationError as e:
@@ -247,4 +250,19 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating):
     except IntegrityError as e:
         return jsonify({'error': str(e.orig)}), 405
 
+    db_query3 = db.session.query(Serviceregister)
+    db_obj_3 = db_query3.all()
+
+    lst = []
+    for row in db_obj_3:
+        if row.service_id == db_obj.service_id and row.rating != None:
+            lst.append(row.rating)
+    db_obj2.avg_rating = ceil(mean(lst))
+
+    try:
+        db.session.commit()
+        db.session.refresh(db_obj)
+    except IntegrityError as e:
+        return jsonify({'error': str(e.orig)}), 405
+    # db_obj2.avg_rating =
     return '', 200
