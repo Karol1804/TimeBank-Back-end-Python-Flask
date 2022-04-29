@@ -9,7 +9,7 @@ build-job:       # This job runs in the build stage, which runs first.
   before_script:
     - apk add zip
   script:
-    - zip -r python.zip public
+    - zip -r python.zip
   artifacts:
     paths:
       - ./timebank
