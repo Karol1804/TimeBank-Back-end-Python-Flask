@@ -14,7 +14,6 @@ build-job:       # This job runs in the build stage, which runs first.
     - mv ./timebank ./public/timebank
     - mv ./run.py ./public/run.py
     - mv ./requirements.txt ./public/requirements.txt
-    - cd public
     - zip -r public.zip public
   artifacts:
     paths:
