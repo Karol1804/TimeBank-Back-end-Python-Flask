@@ -10,7 +10,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - apk add zip
   script:
     - mkdir public
-    - cp ./timebank ./python/timebank
+    - cp timebank python/timebank
     - cd python
     - zip -r public.zip public
   artifacts:
