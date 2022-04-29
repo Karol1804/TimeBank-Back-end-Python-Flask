@@ -199,7 +199,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
     if not db_obj:
         return '', 404
 
-    # db_query2 = service related tu selected serv.reg.
+    # db_query2 = service related tu selected  serv.reg.
     db_query2 = db.session.query(Service)
     db_obj2 = db_query2.get(db_obj.service_id)
     if db_obj.service_status.name == "ended":
