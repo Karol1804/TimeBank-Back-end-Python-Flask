@@ -10,7 +10,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - echo "Compiling the code..."
     - echo "Compile complete."
   artifacts:
-    name: "$python"
+    name: "python.zip"
     paths:
       - ./timebank
       - ./run.py
@@ -30,3 +30,4 @@ deploy-job:
   - chmod 700 ~/.ssh
   script:
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd ~; touch test.txt"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation; unzip python.zip"
