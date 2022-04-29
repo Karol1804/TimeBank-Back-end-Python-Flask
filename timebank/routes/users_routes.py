@@ -88,8 +88,8 @@ def api_single_user_put(user_id):
         db_obj.user_name = req_data['user_name']
 
     # Podmienka ktora zahashuje heslo ktore uzivatej zada v requeste
-    if 'password' in req_data:
-        db_obj.password = generate_password_hash(req_data['password'])
+    # if 'password' in req_data:
+    #     db_obj.password = generate_password_hash(req_data['password'])
 
     # Podmienka ktora skontroluje ci je v requeste cislo. Pokial nie tak vyhodi error
     if 'time_account' in req_data:
@@ -148,7 +148,11 @@ def api_single_user_create():
     # Z tela poziadavky vytiahneme cislo a vlozime ho do databazy
     db_obj.phone = req_data['phone']
     # Z tela poziadavky vytiahneme heslo, zahashujeme ho a vlozime ho do databazy
-    db_obj.password = generate_password_hash(req_data['password'])
+    if req_data['password'] == req_data['password_val']:
+        if len(req_data['password']) > 4:
+            db_obj.password = generate_password_hash(req_data['password'])
+    else:
+        return '{"Message": "Passwords are not equal."}', 400
     # Z tela poziadavky vytiahneme meno a vlozime ho do databazy
     db_obj.user_name = req_data['user_name']
     db_obj.time_account = 0
@@ -180,7 +184,11 @@ def api_single_user_set_password(user_id):
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
 
-    db_obj.password = generate_password_hash(req_data['password'])
+    if req_data['password'] == req_data['password_val']:
+        if len(req_data['password']) > 4:
+            db_obj.password = generate_password_hash(req_data['password'])
+    else:
+        return '{"Message": "Passwords are not equal."}', 400
     try:
         db.session.commit()
     except IntegrityError as e:
