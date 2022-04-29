@@ -172,41 +172,7 @@ def api_single_serviceregister_create():
     return api_single_registerservice_get(db_obj.id)
 
 
-@app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>', methods=['PUT'])
-def api_single_serviceregister_finish(serviceregister_id, hours):
-    try:
-        is_number(serviceregister_id)
-    except ValidationError as e:
-        return jsonify({'error': str(e)}), 400
-    try:
-        is_number(hours)
-    except ValidationError as e:
-        return jsonify({'error': str(e)}), 400
-    db_query = db.session.query(Serviceregister)
-    db_obj = db_query.get(serviceregister_id)
-
-    if not db_obj:
-        return '', 404
-
-    db_query2 = db.session.query(Service)
-    db_obj2 = db_query2.get(db_obj.service_id)
-    if db_obj.service_status.name == "ended":
-        return '', 400
-
-    db_obj.service_status = "ended"
-    db_obj.end_time = datetime.datetime.now()
-    db_obj.hours = hours
-    db_obj2.User.time_account += int(hours)
-
-    try:
-        db.session.commit()
-        db.session.refresh(db_obj)
-    except IntegrityError as e:
-        return jsonify({'error': str(e.orig)}), 405
-
-    return '', 200
-
-
+@app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/', methods=['PUT'])
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
 def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
     try:
@@ -217,14 +183,15 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
         is_number(hours)
     except ValidationError as e:
         return jsonify({'error': str(e)}), 400
-    try:
-        is_number(rating)
-    except ValidationError as e:
-        return jsonify({'error': str(e)}), 400
-    try:
-        is_rating(rating)
-    except ValidationError as e:
-        return jsonify({'error': str(e)}), 400
+    if rating:
+        try:
+             is_number(rating)
+        except ValidationError as e:
+            return jsonify({'error': str(e)}), 400
+        try:
+            is_rating(rating)
+        except ValidationError as e:
+            return jsonify({'error': str(e)}), 400
 
     db_query = db.session.query(Serviceregister)
     db_obj = db_query.get(serviceregister_id)
@@ -252,17 +219,17 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
 
     db_query3 = db.session.query(Serviceregister)
     db_obj_3 = db_query3.all()
+    if rating:
+        lst = []
+        for row in db_obj_3:
+            if row.service_id == db_obj.service_id and row.rating != None:
+                lst.append(row.rating)
+        db_obj2.avg_rating = ceil(mean(lst))
 
-    lst = []
-    for row in db_obj_3:
-        if row.service_id == db_obj.service_id and row.rating != None:
-            lst.append(row.rating)
-    db_obj2.avg_rating = ceil(mean(lst))
-
-    try:
-        db.session.commit()
-        db.session.refresh(db_obj)
-    except IntegrityError as e:
-        return jsonify({'error': str(e.orig)}), 405
+        try:
+            db.session.commit()
+            db.session.refresh(db_obj)
+        except IntegrityError as e:
+            return jsonify({'error': str(e.orig)}), 405
     # db_obj2.avg_rating =
     return '', 200
