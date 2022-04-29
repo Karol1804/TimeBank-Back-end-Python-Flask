@@ -16,7 +16,7 @@ build-job:
   only:
     - main
 
-deploy-job1:
+deploy-to-test-job:
   stage: deploy
   tags:
     - python
@@ -38,11 +38,11 @@ deploy-job1:
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; export FLASK_ENV=development; screen -m -d python3 run.py"
     - echo "Build for testing finished"
 
-deploy-job2:
+deploy-to-prod-job:
   stage: deploy
   tags:
     - python
-  needs: ['build-job', 'deploy-job1']
+  needs: ['deploy-to-test-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
