@@ -12,14 +12,16 @@ build-job:       # This job runs in the build stage, which runs first.
     - mkdir public
     - ls
     - mv ./timebank ./public/timebank
+    - mv ./run.py ./public/run.py
+    - mv ./requirements.txt ./public/requirements.txt
     - cd public
-#    - zip -r public.zip public
+    - zip -r public.zip public
   artifacts:
     paths:
-      - ./timebank
+#      - ./timebank
 #      - ./run.py
 #      - ./requirements.txt
-#      - python.zip
+      - public.zip
   only:
     - main
 
@@ -34,7 +36,7 @@ deploy-job:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   script:
-    - scp -o StrictHostKeyChecking=no artifacts.zip automation@157.245.27.101:/home/automation/timebank_app
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip python.zip"
+    - scp -o StrictHostKeyChecking=no public.zip automation@157.245.27.101:/home/automation/timebank_app
+#    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
+#    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
+#    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip python.zip"
