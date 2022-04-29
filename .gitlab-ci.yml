@@ -20,7 +20,7 @@ deploy-job1:
   stage: deploy
   tags:
     - python
-  needs: ['build']
+  needs: ['build-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
@@ -42,7 +42,7 @@ deploy-job2:
   stage: deploy
   tags:
     - python
-  needs: ['build']
+  needs: ['build-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
