@@ -34,3 +34,4 @@ deploy-job:
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; touch default.zip"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip default.zip"
