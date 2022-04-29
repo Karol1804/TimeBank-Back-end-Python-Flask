@@ -174,7 +174,7 @@ def api_single_serviceregister_create():
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/', methods=['PUT'])
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
-def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating):
+def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
     try:
         is_number(serviceregister_id)
     except ValidationError as e:
