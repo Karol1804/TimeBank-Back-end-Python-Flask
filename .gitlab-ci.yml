@@ -9,15 +9,15 @@ build-job:
   before_script:
     - apk add zip
   script:
-    - mkdir public
-    - mv ./timebank ./public/timebank
-    - mv ./run.py ./public/run.py
-    - mv ./requirements.txt ./public/requirements.txt
-    - cd public
-    - zip -r public.zip .
+#    - mkdir public
+#    - mv ./timebank ./public/timebank
+#    - mv ./run.py ./public/run.py
+#    - mv ./requirements.txt ./public/requirements.txt
+#    - cd public
+    - zip -r public.zip timebank
   artifacts:
     paths:
-      - public/public.zip
+      - public.zip
   only:
     - main
 
