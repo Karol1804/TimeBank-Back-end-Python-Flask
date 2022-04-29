@@ -31,7 +31,7 @@ deploy-job:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   script:
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101:/home/automation/timebank_app
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101:/home/automation
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip python.zip"
