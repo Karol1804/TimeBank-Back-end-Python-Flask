@@ -11,7 +11,7 @@ build-job:       # This job runs in the build stage, which runs first.
   script:
     - mkdir public
     - ls
-    - cp ./timebank ./public/timebank
+    - mv ./timebank ./public/timebank
     - cd public
 #    - zip -r public.zip public
   artifacts:
