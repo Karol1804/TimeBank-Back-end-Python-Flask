@@ -1,8 +1,8 @@
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - build
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+build-job:
   stage: build
   tags:
     - python
@@ -17,9 +17,6 @@ build-job:       # This job runs in the build stage, which runs first.
     - zip -r public.zip public
   artifacts:
     paths:
-#      - ./timebank
-#      - ./run.py
-#      - ./requirements.txt
       - public.zip
   only:
     - main
@@ -36,6 +33,11 @@ deploy-job:
   - chmod 700 ~/.ssh
   script:
     - scp -o StrictHostKeyChecking=no public.zip automation@157.245.27.101:/home/automation/timebank_app
-#    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
-#    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
-#    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip python.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip public.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; pip install -r requirements.txt"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; export FLASK_APP=run.py"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; export FLASK_ENV=development"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; python3 run.py"
