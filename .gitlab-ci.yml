@@ -10,7 +10,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - echo "Compiling the code..."
     - echo "Compile complete."
   artifacts:
-    name: "$python.zip"
+    name: "$python"
     paths:
       - ./timebank
       - ./run.py
@@ -19,7 +19,6 @@ build-job:       # This job runs in the build stage, which runs first.
     - main
 
 deploy-job:
-  image: alpine
   stage: deploy
   tags:
     - python
