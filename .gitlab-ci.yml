@@ -1,29 +1,43 @@
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - build
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+build-job:
   stage: build
-#  script:
-#    - ./Dockerfile
   tags:
     - python
+  before_script:
+    - apk add zip
   script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
+    - mkdir public
+    - mv ./timebank ./public/timebank
+    - mv ./run.py ./public/run.py
+    - mv ./requirements.txt ./public/requirements.txt
+    - zip -r public.zip public
   artifacts:
-    name: "$CI_JOB_NAME"
     paths:
-      - ./timebank
-      - ./run.py
-      - ./requirements.txt
+      - public.zip
   only:
     - main
 
-deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+deploy-job:
+  stage: deploy
   tags:
     - python
+  before_script:
+  - apk add openssh-client
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
   script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+    - scp -o StrictHostKeyChecking=no public.zip automation@157.245.27.101:/home/automation/timebank_app
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip public.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; pip3 install -r requirements.txt"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; export FLASK_APP=run.py"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; export FLASK_ENV=development"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; python3 run.py"
+
