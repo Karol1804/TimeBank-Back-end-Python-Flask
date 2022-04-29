@@ -35,6 +35,7 @@ deploy-job1:
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip public.zip"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate; pip install -r requirements.txt"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; export FLASK_ENV=development; screen -m -d python3 run.py"
+    - echo "Build for testing finished"
 
 deploy-job2:
   stage: deploy
@@ -56,4 +57,5 @@ deploy-job2:
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; rm requirements.txt"
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; unzip public.zip"
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; source venv/bin/activate; pip install -r requirements.txt"
-    - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; nohup python3 run.py"
+    - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; screen -m -d python3 run.py"
+    - echo "Building for production finished"
