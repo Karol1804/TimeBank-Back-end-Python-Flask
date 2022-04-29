@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from timebank.models.serviceregister_model import Serviceregister
 from timebank import app, db
 from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
-    user_exists, service_exists
+    user_exists, service_exists, is_rating
 from timebank.models.services_model import Service
 
 
@@ -193,6 +193,52 @@ def api_single_serviceregister_finish(serviceregister_id, hours):
     db_obj.service_status = "ended"
     db_obj.end_time = datetime.datetime.now()
     db_obj.hours = hours
+    db_obj2.User.time_account += int(hours)
+
+    try:
+        db.session.commit()
+        db.session.refresh(db_obj)
+    except IntegrityError as e:
+        return jsonify({'error': str(e.orig)}), 405
+
+    return '', 200
+
+
+@app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
+def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating):
+    try:
+        is_number(serviceregister_id)
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+    try:
+        is_number(hours)
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+    try:
+        is_number(rating)
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+    try:
+        is_rating(rating)
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+
+    db_query = db.session.query(Serviceregister)
+    db_obj = db_query.get(serviceregister_id)
+
+    if not db_obj:
+        return '', 404
+
+    # db_query2 = service related tu selected serv.reg.
+    db_query2 = db.session.query(Service)
+    db_obj2 = db_query2.get(db_obj.service_id)
+    if db_obj.service_status.name == "ended":
+        return '', 400
+
+    db_obj.service_status = "ended"
+    db_obj.end_time = datetime.datetime.now()
+    db_obj.hours = hours
+    db_obj.rating = rating
     db_obj2.User.time_account += int(hours)
 
     try:

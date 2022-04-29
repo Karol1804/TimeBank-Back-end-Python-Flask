@@ -63,6 +63,13 @@ def is_number(field):
         raise ValidationError(field, f"Number is not valid.")
 
 
+def is_rating(field):
+    if -1 < int(field) < 6:
+        return field
+    else:
+        raise ValidationError(field, f"Number is not in 5* rating from 0 to 5.")
+
+
 def user_exists(field):
     if not db.session.query(User).get(field):
         raise ValidationError(field, f"User id does not exist.")
