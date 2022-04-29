@@ -10,7 +10,8 @@ from timebank.libs.response_helpers import record_sort_params_handler, get_all_d
 def api_services():
     sort_field, sort_dir, valid = record_sort_params_handler(request.args, Service)
     if not valid:
-        return '', 400
+        return {'Bad Request': 'services not found'}, 400
+
     db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(Service)).all()
 
     if len(db_objs):
@@ -38,7 +39,7 @@ def api_single_service_get(services_id):
     obj = db_query.get(services_id)
 
     if not obj:
-        return '', 404
+        return {'Bad Request': f'Service {services_id} not found'}, 400
 
     response_obj = [dict(
         id=obj.id,
@@ -62,7 +63,7 @@ def api_single_service_put(services_id):
     db_obj = db_query.get(services_id)
 
     if not db_obj:
-        return '', 404
+        return {'Bad Request': f'Service {services_id} not found'}, 400
 
     req_data = None
     if request.content_type == 'application/json':
@@ -99,7 +100,7 @@ def api_single_service_delete(services_id):
     db_obj = db_query.filter_by(id=services_id)
 
     if not db_test:
-        return '', 404
+        return {'Bad Request': f'Service {services_id} not found'}, 400
 
     try:
         db_obj.delete()
@@ -125,6 +126,7 @@ def api_single_service_create():
         user_exists(req_data['user_id'])
     except ValidationError as e:
         return jsonify({'error': str(e)}), 400
+
     db_obj.user_id = int(req_data['user_id'])
     db_obj.title = req_data['title']
 
