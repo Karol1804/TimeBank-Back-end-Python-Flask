@@ -6,6 +6,8 @@ build-job:       # This job runs in the build stage, which runs first.
   stage: build
   tags:
     - python
+  before_script:
+    - apk add zip
   script:
     - echo "Compiling the code..."
     - echo "Compile complete."
@@ -30,4 +32,4 @@ deploy-job:
   - chmod 700 ~/.ssh
   script:
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd ~; touch test.txt"
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation; unzip default.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation; touch default.zip"
