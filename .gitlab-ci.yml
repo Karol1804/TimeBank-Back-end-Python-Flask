@@ -33,7 +33,7 @@ deploy-job:
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm requirements.txt"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip public.zip"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate"
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; pip3 install -r requirements.txt"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; pip install -r requirements.txt"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; export FLASK_APP=run.py"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; export FLASK_ENV=development"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; python3 run.py"
