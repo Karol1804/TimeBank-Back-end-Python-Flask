@@ -10,6 +10,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - apk add zip
   script:
     - mkdir public
+    - ls
     - cp ./timebank ./public/timebank
     - cd public
 #    - zip -r public.zip public
