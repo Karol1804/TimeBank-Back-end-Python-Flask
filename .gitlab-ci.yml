@@ -17,7 +17,7 @@ build-job:
     - zip -r public.zip timebank run.py requirements.txt
   artifacts:
     paths:
-      - public.zip
+      - public/public.zip
   only:
     - main
 
