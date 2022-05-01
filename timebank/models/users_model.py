@@ -8,8 +8,8 @@ class User(Base):
     __tablename__ = "User"
     id = Column(Integer(), primary_key=True, autoincrement=True)
     phone = Column(String(30), unique=True, nullable=False)
-    password = Column(String(200))
-    user_name = Column(String(30))
+    password = Column(String(200), nullable=False)
+    user_name = Column(String(30), nullable=False)
     time_account = Column(Integer())
 
     Service = relationship("Service", order_by="Service.id", back_populates="User", cascade="all")

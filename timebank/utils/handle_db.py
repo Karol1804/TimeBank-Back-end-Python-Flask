@@ -20,7 +20,7 @@ mycursor.execute(sql1)
 sql2 = "CREATE TABLE User" \
        "(id INT PRIMARY KEY AUTO_INCREMENT," \
        "phone VARCHAR(30) NOT NULL," \
-       "password VARCHAR(200)," \
+       "password VARCHAR(200) NOT NULL," \
        "user_name VARCHAR(30) NOT NULL," \
        "time_account INT NOT NULL," \
        "UNIQUE (phone));"
