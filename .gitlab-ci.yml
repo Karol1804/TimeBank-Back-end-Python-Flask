@@ -43,7 +43,7 @@ deploy-to-prod-job:
   stage: deploy
   tags:
     - python
-  needs: ['deploy-to-test-job']
+  needs: ['deploy-to-test-job', 'build-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
