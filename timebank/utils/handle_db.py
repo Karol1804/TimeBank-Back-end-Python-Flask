@@ -1,8 +1,8 @@
 import mysql.connector
 
 mydb = mysql.connector.connect(
-       host="127.0.0.1",  # Localhost
-       # host="157.245.27.101",  # Testing
+       # host="127.0.0.1",  # Localhost
+       host="157.245.27.101",  # Testing
        # host="157.230.79.85",  # Production
        port='33306',
        user="automation",
@@ -52,11 +52,11 @@ sql4 = "CREATE TABLE Serviceregister" \
 
 mycursor.execute(sql4)
 
-sql5 = "INSERT INTO User (phone, user_name, time_account)" \
-       "VALUES ('+421 905 111222', 'Obi-wan Kenobi', '0');"
+sql5 = "INSERT INTO User (phone, user_name, time_account, password)" \
+       "VALUES ('+421 905 111222', 'Obi-wan Kenobi', '0', 'Janko Hrasko');"
 
-sql6 = "INSERT INTO User (phone, user_name, time_account)"\
-       "VALUES ('+421 905 333444', 'Darth Vader', '0');"
+sql6 = "INSERT INTO User (phone, user_name, time_account, password)"\
+       "VALUES ('+421 905 333444', 'Darth Vader', '0', 'Janko Hrasko');"
 
 sql7 = "INSERT INTO Service (title, user_id)" \
        "VALUES ('Pokosim travnik', '1');"
