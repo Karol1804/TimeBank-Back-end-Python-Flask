@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from timebank.models.services_model import Service
 from timebank import app, db
 from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
-    user_exists
+    user_exists, is_estimate
 
 
 @app.route('/api/v1/services', methods=['GET'])
@@ -27,6 +27,7 @@ def api_services():
                     time_account=obj.User.time_account,
                 ),
                 avg_rating=obj.avg_rating,
+                estimate=obj.estimate,
             ))
 
         return jsonify(response_obj), 200
@@ -52,6 +53,7 @@ def api_single_service_get(services_id):
             time_account=obj.User.time_account,
         ),
         avg_rating=obj.avg_rating,
+        estimate=obj.estimate,
     )]
 
     response = jsonify(response_obj)
@@ -84,6 +86,9 @@ def api_single_service_put(services_id):
 
     if 'title' in req_data:
         db_obj.title = req_data['title']
+
+    if 'estimate' in req_data:
+        db_obj.estimate = req_data['estimate']
 
     try:
         db.session.commit()
@@ -129,8 +134,15 @@ def api_single_service_create():
     except ValidationError as e:
         return jsonify({'error': str(e)}), 400
 
+    try:
+        is_number(req_data['estimate'])
+        is_estimate(req_data['estimate'])
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+
     db_obj.user_id = int(req_data['user_id'])
     db_obj.title = req_data['title']
+    db_obj.estimate = int(req_data['estimate'])
 
     try:
         db.session.add(db_obj)
