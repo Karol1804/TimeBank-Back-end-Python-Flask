@@ -10,46 +10,30 @@ from timebank.libs.response_helpers import record_sort_params_handler, get_all_d
 
 
 @app.route('/api/v1/services', methods=['GET'])
-@jwt_required(optional=True)
 def api_services():
     sort_field, sort_dir, valid = record_sort_params_handler(request.args, Service)
     if not valid:
         return {'Bad Request': 'services not found'}, 400
 
     db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(Service)).all()
-    print(get_jwt_identity())
-    if get_jwt_identity() is None:
-        if len(db_objs):
-            response_obj = []
-            for obj in db_objs:
-                response_obj.append(dict(
-                    id=obj.id,
-                    title=obj.title,
-                    avg_rating=obj.avg_rating,
-                    estimate=obj.estimate,
-                ))
-            return jsonify(response_obj), 200
-        else:
-            return '', 404
+    if len(db_objs):
+        response_obj = []
+        for obj in db_objs:
+            response_obj.append(dict(
+                id=obj.id,
+                title=obj.title,
+                User=dict(
+                    id=obj.User.id,
+                    phone=obj.User.phone,
+                    user_name=obj.User.user_name,
+                    time_account=obj.User.time_account,
+                ),
+                avg_rating=obj.avg_rating,
+                estimate=obj.estimate,
+            ))
+        return jsonify(response_obj), 200
     else:
-        if len(db_objs):
-            response_obj = []
-            for obj in db_objs:
-                response_obj.append(dict(
-                    id=obj.id,
-                    title=obj.title,
-                    User=dict(
-                        id=obj.User.id,
-                        phone=obj.User.phone,
-                        user_name=obj.User.user_name,
-                        time_account=obj.User.time_account,
-                    ),
-                    avg_rating=obj.avg_rating,
-                    estimate=obj.estimate,
-                ))
-            return jsonify(response_obj), 200
-        else:
-            return '', 404
+        return '', 404
 
 
 @app.route('/api/v1/service/<services_id>', methods=['GET'])
