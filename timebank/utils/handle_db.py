@@ -53,12 +53,12 @@ sql4 = "CREATE TABLE Serviceregister" \
 mycursor.execute(sql4)
 
 sql5 = "INSERT INTO User (phone, user_name, time_account, password)" \
-       "VALUES ('+421 905 111222', 'Obi-wan Kenobi', '0', 'pbkdf2:sha256:260000$CVr0FaQBwatX" \
-       "VD2K$8367944e77dd2655fc7a13a9c45f7b4556df71da10aa7811d9802e8a7ddf6e2f');"
+       "VALUES ('+421 905 111222', 'Obi-wan Kenobi', '0', 'pbkdf2:sha256:" \
+       "260000$1yyqbo0lPFJzVVN0$e13ea172176deafd656aa4023792e5f28cd35cec7ee195577da1892e189065eb');"
 
 sql6 = "INSERT INTO User (phone, user_name, time_account, password)"\
-       "VALUES ('+421 905 333444', 'Darth Vader', '0', 'pbkdf2:sha256:260000$vm1oS0rskPUBYEx8$7" \
-       "c47bc207a9e1d032b510dbcd4c89ed54ff94cd1478bdf3e43f8c12e6c1b0ac1');"
+       "VALUES ('+421 905 333444', 'Darth Vader', '0', 'pbkdf2:sha256:" \
+       "260000$A0ed6t7sfiOdJ9zy$91cb89967046760cfcb37a7a8348de9ae36d5d4220e93751d284e16b32530618');"
 
 sql7 = "INSERT INTO Service (title, user_id)" \
        "VALUES ('Pokosim travnik', '1');"

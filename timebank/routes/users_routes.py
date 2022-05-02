@@ -185,8 +185,7 @@ def api_single_user_set_password(user_id):
         req_data = request.form
 
     if req_data['password'] == req_data['password_val']:
-        if len(req_data['password']) > 4:
-            db_obj.password = generate_password_hash(req_data['password'])
+        db_obj.password = generate_password_hash(req_data['password'])
     else:
         return '{"Message": "Passwords are not equal."}', 400
     try:
