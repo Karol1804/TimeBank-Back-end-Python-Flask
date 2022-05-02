@@ -222,7 +222,8 @@ def api_service_user_id(user_id):
                     phone=obj.phone,
                     user_name=obj.user_name,
                     estimate=service.estimate,
-                    rating=service.avg_rating
+                    rating=service.avg_rating,
+                    user_id=obj.id
             ))
         return jsonify(response_obj), 200
     else:
