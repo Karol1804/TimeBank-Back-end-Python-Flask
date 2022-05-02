@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone, timedelta
 from flask import Flask
 from flask_cors import CORS
@@ -13,6 +14,9 @@ else:
 db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 jwt = JWTManager(app)
+
+logging.basicConfig(filename='record.log', level=logging.DEBUG,
+                    format=f'%(message)s')
 
 
 @app.after_request
