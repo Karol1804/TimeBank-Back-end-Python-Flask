@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "179b0798-9907-47ea-ad84-ce420848d2f4",
+		"_postman_id": "1d010978-448b-451e-82dd-834b04527b75",
 		"name": "sprint2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -413,6 +413,44 @@
 								"api",
 								"v1",
 								"service-create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://157.245.27.101:5000/api/v1/service-search?ord=asc&field=title&s=tit",
+							"protocol": "http",
+							"host": [
+								"157",
+								"245",
+								"27",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"service-search"
+							],
+							"query": [
+								{
+									"key": "ord",
+									"value": "asc"
+								},
+								{
+									"key": "field",
+									"value": "title"
+								},
+								{
+									"key": "s",
+									"value": "tit"
+								}
 							]
 						}
 					},
