@@ -5,6 +5,8 @@ from flask_jwt_extended import create_access_token, create_refresh_token, set_ac
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from timebank.models.serviceregister_model import Serviceregister
+from timebank.models.services_model import Service
 from timebank.models.users_model import User
 from timebank import app, db
 from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
@@ -257,18 +259,40 @@ def api_single_user_logout():
 @jwt_required()
 def api_single_user_profile():
     phone = get_jwt_identity()
-
     db_query = db.session.query(User)
     try:
         obj = db_query.filter_by(phone=phone).one()
     except NoResultFound:
         return '{"Message": "No result found."}', 404
+    db_query2 = db.session.query(Serviceregister)
+    obj2 = db_query2.filter_by(service_id=Service.id).all()
 
+    services = []
+    for ser in obj.Service:
+        serviceregister = []
+        for serreg in obj2:
+            if serreg.service_id == ser.id:
+                serviceregister.append(dict(
+                    id=serreg.id,
+                    consumer_id=serreg.consumer_id,
+                    hours=serreg.hours,
+                    service_status=serreg.service_status.name,
+                    end_time=serreg.end_time,
+                    rating=serreg.rating,
+                ))
+        services.append(dict(
+            id=ser.id,
+            title=ser.title,
+            estimate=ser.estimate,
+            avg_rating=ser.avg_rating,
+            serviceregister=serviceregister,
+        ))
     response_obj = [dict(
         id=obj.id,
         phone=obj.phone,
         user_name=obj.user_name,
         time_account=obj.time_account,
+        services=services,
     )]
 
     response = jsonify(response_obj)
