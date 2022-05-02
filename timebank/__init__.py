@@ -1,6 +1,5 @@
 from datetime import datetime, timezone, timedelta
 from flask import Flask
-import logging
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, set_access_cookies, get_jwt
 from flask_sqlalchemy import SQLAlchemy
@@ -35,10 +34,6 @@ def add_header(response):
         return response
     except (RuntimeError, KeyError):
         return response
-
-
-logging.basicConfig(filename='record.log', level=logging.DEBUG,
-                    format=f'%(message)s')
 
 
 @app.route('/blogs')
