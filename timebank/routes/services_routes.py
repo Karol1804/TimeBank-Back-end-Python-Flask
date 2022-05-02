@@ -17,6 +17,7 @@ def api_services():
         return {'Bad Request': 'services not found'}, 400
 
     db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(Service)).all()
+    print(get_jwt_identity())
     if get_jwt_identity() is None:
         if len(db_objs):
             response_obj = []
@@ -26,7 +27,7 @@ def api_services():
                     title=obj.title,
                     avg_rating=obj.avg_rating,
                     estimate=obj.estimate,
-            ))
+                ))
             return jsonify(response_obj), 200
         else:
             return '', 404
