@@ -236,7 +236,7 @@
 					"response": []
 				},
 				{
-					"name": "Services by User",
+					"name": "Service by User",
 					"request": {
 						"method": "GET",
 						"header": [],
