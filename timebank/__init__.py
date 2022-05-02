@@ -1,9 +1,10 @@
+import logging
 from datetime import datetime, timezone, timedelta
 from flask import Flask
-import logging
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, set_access_cookies, get_jwt
 from flask_sqlalchemy import SQLAlchemy
+
 app = Flask(__name__)
 if app.config["ENV"] == "production":
     app.config.from_object("timebank.utils.config.ProductionConfig")
@@ -13,6 +14,9 @@ else:
 db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 jwt = JWTManager(app)
+
+logging.basicConfig(filename='record.log', level=logging.DEBUG,
+                    format=f'%(message)s')
 
 
 @app.after_request
@@ -36,19 +40,6 @@ def add_header(response):
     except (RuntimeError, KeyError):
         return response
 
-
-logging.basicConfig(filename='record.log', level=logging.DEBUG,
-                    format=f'%(message)s')
-
-
-@app.route('/blogs')
-def blog():
-    app.logger.info('Info level log')
-    app.logger.warning('Warning level log')
-    return f"Welcome to the Blog"
-
-
-app.run(host='localhost', debug=True)
 
 import timebank.models
 import timebank.routes
