@@ -26,6 +26,8 @@ def api_get_all_service_register():
                 Service=dict(
                     id=obj.Service.id,
                     title=obj.Service.title,
+                    estimate=obj.Service.estimate,
+                    avg_rating=obj.Service.avg_rating,
                 ),
                 User=dict(
                     id=obj.User.id,
@@ -45,7 +47,6 @@ def api_get_all_service_register():
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['GET'])
 def api_single_registerservice_get(serviceregister_id):
-
     db_query = db.session.query(Serviceregister)
     obj = db_query.get(serviceregister_id)
 
@@ -57,6 +58,8 @@ def api_single_registerservice_get(serviceregister_id):
         Service=dict(
             id=obj.Service.id,
             title=obj.Service.title,
+            estimate=obj.Service.estimate,
+            avg_rating=obj.Service.avg_rating,
         ),
         User=dict(
             id=obj.User.id,
@@ -75,7 +78,6 @@ def api_single_registerservice_get(serviceregister_id):
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['PUT'])
 def api_single_serviceregister_put(serviceregister_id):
-
     db_query = db.session.query(Serviceregister)
     db_obj = db_query.get(serviceregister_id)
 
@@ -117,7 +119,6 @@ def api_single_serviceregister_put(serviceregister_id):
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['DELETE'])
 def api_single_registerservice_delete(serviceregister_id):
-
     db_query = db.session.query(Serviceregister)
     db_test = db_query.get(serviceregister_id)
     db_obj = db_query.filter_by(id=serviceregister_id)
@@ -185,7 +186,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
         return jsonify({'error': str(e)}), 400
     if rating:
         try:
-             is_number(rating)
+            is_number(rating)
         except ValidationError as e:
             return jsonify({'error': str(e)}), 400
         try:
@@ -199,7 +200,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
     if not db_obj:
         return '', 404
 
-    # db_query2 = service related tu selected  serv.reg.
+    # db_query2 = service related to selected serv.reg.
     db_query2 = db.session.query(Service)
     db_obj2 = db_query2.get(db_obj.service_id)
     if db_obj.service_status.name == "ended":
@@ -226,10 +227,10 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
                 lst.append(row.rating)
         db_obj2.avg_rating = ceil(mean(lst))
 
-        try:
-            db.session.commit()
-            db.session.refresh(db_obj)
-        except IntegrityError as e:
-            return jsonify({'error': str(e.orig)}), 405
+    try:
+        db.session.commit()
+        db.session.refresh(db_obj)
+    except IntegrityError as e:
+        return jsonify({'error': str(e.orig)}), 405
     # db_obj2.avg_rating =
     return '', 200
