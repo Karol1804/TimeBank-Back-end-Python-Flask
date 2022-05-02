@@ -26,6 +26,7 @@ def api_services():
                     user_name=obj.User.user_name,
                     time_account=obj.User.time_account,
                 ),
+                avg_rating=obj.avg_rating,
             ))
 
         return jsonify(response_obj), 200
@@ -50,6 +51,7 @@ def api_single_service_get(services_id):
             user_name=obj.User.user_name,
             time_account=obj.User.time_account,
         ),
+        avg_rating=obj.avg_rating,
     )]
 
     response = jsonify(response_obj)
