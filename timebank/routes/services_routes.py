@@ -230,14 +230,14 @@ def api_service_user_id(user_id):
 
     if len(db_objs):
         response_obj = []
-        for x in db_objs:
-            if x.user_id == obj.id:
+        for service in db_objs:
+            if service.user_id == obj.id:
                 response_obj.append(dict(
-                    title=x.title,
+                    title=service.title,
                     phone=obj.phone,
-                    username=obj.user_name,
-                    estimate=x.estimate,
-                    rating=x.avg_rating
+                    user_name=obj.user_name,
+                    estimate=service.estimate,
+                    rating=service.avg_rating
             ))
         return jsonify(response_obj), 200
     else:
