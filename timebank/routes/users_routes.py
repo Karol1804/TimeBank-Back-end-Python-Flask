@@ -229,7 +229,8 @@ def api_single_user_login():
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
 
-    response = jsonify({'login': True, 'phone': phone, 'id': db_obj.id, 'access_token': access_token})
+    response = jsonify({'login': True, 'phone': phone, 'id': db_obj.id,
+                        'user_name': db_obj.user_name, 'access_token': access_token})
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
 
