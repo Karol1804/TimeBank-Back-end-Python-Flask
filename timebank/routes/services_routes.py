@@ -89,6 +89,12 @@ def api_single_service_put(services_id):
         db_obj.title = req_data['title']
 
     if 'estimate' in req_data:
+        try:
+            is_number(req_data['estimate'])
+            is_estimate(req_data['estimate'])
+        except ValidationError as e:
+            return jsonify({'error': str(e)}), 400
+
         db_obj.estimate = req_data['estimate']
 
     try:
