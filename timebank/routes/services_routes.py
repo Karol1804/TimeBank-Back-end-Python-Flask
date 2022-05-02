@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from timebank.models.services_model import Service
 from timebank import app, db
@@ -152,3 +153,39 @@ def api_single_service_create():
         return jsonify({'error': str(e.orig)}), 405
 
     return api_single_service_get(db_obj.id)
+
+
+# metoda pro autocomplete - /api/v1/service-search?ord=asc&field=title&s=tit
+@app.route('/api/v1/service-search', methods=['GET'])
+def api_service_search():
+    field, sort_dir, valid = record_sort_params_handler(request.args, Service)
+    if not valid:
+        return '', 400
+
+    if request.args.get('s'):
+        search_string = request.args.get('s')
+    else:
+        return '', 400
+
+    response_obj = []
+    if len(search_string) > 1:
+        db_query = db.session.query(Service)
+        db_filter = db_query.filter(Service.title.like('%' + search_string + '%'))
+
+        if field and sort_dir:
+            db_objs = db_filter.order_by(text(field + ' ' + sort_dir)).all()
+        else:
+            db_objs = db.filter.all()
+
+        if len(db_objs):
+
+            for obj in db_objs:
+                response_obj.append(dict(
+                    id=obj.id,
+                    title=obj.title,
+                    user_id=obj.user_id,
+                    estimate=obj.estimate,
+                    avg_rating=obj.avg_rating
+                ))
+
+    return jsonify(response_obj), 200
