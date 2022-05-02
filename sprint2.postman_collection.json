@@ -455,6 +455,31 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Services User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://157.245.27.101:5000/api/v1/services-user/1",
+							"protocol": "http",
+							"host": [
+								"157",
+								"245",
+								"27",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"services-user",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -646,7 +671,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MDM3Nzg4MSwianRpIjoiMTIyZTcyNWQtZDMxZS00NmY4LTk3NTctMDAxYjExMzA5N2JhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MDM3Nzg4MSwiZXhwIjoxNjUwMzgxNDgxfQ.TvSiM0PrRpKDDihsjnYbQc9OLHaKnCRdh105ml3k_Q8",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MTQ4OTIzNywianRpIjoiYzIxNmNkOTAtMThmYy00NDg0LThjM2UtNDI1YmRiMmE5MzFmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MTQ4OTIzNywiZXhwIjoxNjUxNDkyODM3fQ.XLrncJTlbdDIasT8pXojAEAEAnWbKvV8759ExSuKy4o",
 				"type": "string"
 			}
 		]
