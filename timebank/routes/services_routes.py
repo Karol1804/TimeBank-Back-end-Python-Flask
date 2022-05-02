@@ -2,6 +2,7 @@ from flask import request, jsonify
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from timebank.models.services_model import Service
+from timebank.models.users_model import User
 from timebank import app, db
 from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
     user_exists, is_estimate
@@ -195,3 +196,35 @@ def api_service_search():
                 ))
 
     return jsonify(response_obj), 200
+
+
+# Vytvor zoznam sluzieb ktory odfiltruje zoznam sluzieb podla konkretneho poskytovatela:
+@app.route('/api/v1/services-user/<user_id>', methods=['GET'])
+def api_service_user_id(user_id):
+    sort_field, sort_dir, valid = record_sort_params_handler(request.args, Service)
+
+    if not valid:
+        return '', 400
+
+    db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(Service)).all()
+
+    db_query = db.session.query(User)
+    obj = db_query.get(user_id)
+
+    if not obj:
+        return '{"Message": "No user with that ID!"}', 404
+
+    if len(db_objs):
+        response_obj = []
+        for x in db_objs:
+            if x.user_id == obj.id:
+                response_obj.append(dict(
+                    title=x.title,
+                    phone=obj.phone,
+                    username=obj.user_name,
+                    estimate=x.estimate,
+                    rating=x.avg_rating
+            ))
+        return jsonify(response_obj), 200
+    else:
+        return '', 404
