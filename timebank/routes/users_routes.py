@@ -194,7 +194,7 @@ def api_single_user_create():
                     f"  Id: {db_obj.id},\n"
                     f"  Phone: {db_obj.phone},\n"
                     f"  Username: {db_obj.user_name},\n"
-                    f"  Time account {db_obj.time_account}.")
+                    f"  Time account: {db_obj.time_account}.")
 
     return api_single_user_get(db_obj.id)
 
