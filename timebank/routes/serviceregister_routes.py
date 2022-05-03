@@ -3,6 +3,7 @@ from math import ceil
 from statistics import mean
 
 from flask import request, jsonify
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from timebank.models.serviceregister_model import Serviceregister
 from timebank import app, db
@@ -211,6 +212,8 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
     db_obj.hours = hours
     db_obj.rating = rating
     db_obj2.User.time_account += int(hours)
+    db_obj2.avg_rating = db.session.query(func.avg(
+        Serviceregister.rating)).filter(Serviceregister.service_id == db_obj.service_id, Serviceregister.rating != None)
 
     try:
         db.session.commit()
@@ -218,19 +221,5 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
     except IntegrityError as e:
         return jsonify({'error': str(e.orig)}), 405
 
-    db_query3 = db.session.query(Serviceregister)
-    db_obj_3 = db_query3.all()
-    if rating:
-        lst = []
-        for row in db_obj_3:
-            if row.service_id == db_obj.service_id and row.rating != None:
-                lst.append(row.rating)
-        db_obj2.avg_rating = ceil(mean(lst))
-
-    try:
-        db.session.commit()
-        db.session.refresh(db_obj)
-    except IntegrityError as e:
-        return jsonify({'error': str(e.orig)}), 405
-    # db_obj2.avg_rating =
     return '', 200
+
