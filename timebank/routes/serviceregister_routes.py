@@ -1,14 +1,14 @@
 import datetime
-
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
-
 from timebank.models.serviceregister_model import Serviceregister
 from timebank import app, db
 from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
     user_exists, service_exists, is_rating
 from timebank.models.services_model import Service
+from timebank.models.users_model import User
 
 
 @app.route('/api/v1/serviceregister', methods=['GET'])
@@ -138,6 +138,7 @@ def api_single_registerservice_delete(serviceregister_id):
 
 
 @app.route('/api/v1/serviceregister-create', methods=['POST'])
+@jwt_required()
 def api_single_serviceregister_create():
     db_obj = Serviceregister()
 
@@ -147,22 +148,21 @@ def api_single_serviceregister_create():
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
 
+    db_query2 = db.session.query(User)
+    obj2 = db_query2.filter_by(phone=get_jwt_identity()).one()
+
     try:
         is_number(req_data['service_id'])
         service_exists(req_data['service_id'])
     except ValidationError as e:
         return jsonify({'error': str(e)}), 400
     db_obj.service_id = req_data['service_id']
-    db_query2 = db.session.query(Service)
-    db_obj2 = db_query2.get(db_obj.service_id)
-    if db_obj2.user_id == req_data['consumer_id']:
+    db_query3 = db.session.query(Service)
+    db_obj2 = db_query3.get(db_obj.service_id)
+    if db_obj2.user_id == obj2.id:
         return jsonify({'error': 'User and consumer are the same'}), 400
-    try:
-        is_number(req_data['consumer_id'])
-        user_exists(req_data['consumer_id'])
-    except ValidationError as e:
-        return jsonify({'error': str(e)}), 400
-    db_obj.consumer_id = req_data['consumer_id']
+
+    db_obj.consumer_id = obj2.id
     db_obj.service_status = "inprogress"
 
     try:
@@ -223,4 +223,3 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
         return jsonify({'error': str(e.orig)}), 405
 
     return '', 200
-
