@@ -1,10 +1,9 @@
 import datetime
-from math import ceil
-from statistics import mean
 
 from flask import request, jsonify
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
+
 from timebank.models.serviceregister_model import Serviceregister
 from timebank import app, db
 from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
