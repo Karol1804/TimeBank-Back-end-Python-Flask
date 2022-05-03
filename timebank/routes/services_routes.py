@@ -126,6 +126,7 @@ def api_single_service_delete(services_id):
 
 
 @app.route('/api/v1/service-create', methods=['POST'])
+@jwt_required()
 def api_single_service_create():
     db_obj = Service()
 
@@ -134,6 +135,9 @@ def api_single_service_create():
         req_data = request.json
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
+
+    db_query2 = db.session.query(User)
+    obj2 = db_query2.filter_by(phone=get_jwt_identity()).one()
 
     try:
         is_number(req_data['user_id'])
@@ -149,7 +153,7 @@ def api_single_service_create():
         except ValidationError as e:
             return jsonify({'error': str(e)}), 400
 
-    db_obj.user_id = int(req_data['user_id'])
+    db_obj.user_id = obj2.id
     db_obj.title = req_data['title']
 
     try:
