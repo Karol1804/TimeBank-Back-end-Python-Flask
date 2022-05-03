@@ -128,13 +128,16 @@ def api_single_service_delete(services_id):
 @app.route('/api/v1/service-create', methods=['POST'])
 def api_single_service_create():
     db_obj = Service()
+    print(db_obj)
 
     req_data = None
     if request.content_type == 'application/json':
         req_data = request.json
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
-
+    print(req_data['user_id'])
+    print(req_data['estimate'])
+    print(req_data['title'])
     try:
         is_number(req_data['user_id'])
         user_exists(req_data['user_id'])
