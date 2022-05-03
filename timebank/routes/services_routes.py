@@ -150,9 +150,11 @@ def api_single_service_create():
     except ValidationError as e:
         return jsonify({'error': str(e)}), 400
 
+    if req_data['estimate']:
+        db_obj.estimate = int(req_data['estimate'])
+
     db_obj.user_id = int(req_data['user_id'])
     db_obj.title = req_data['title']
-    db_obj.estimate = int(req_data['estimate'])
 
     try:
         db.session.add(db_obj)
