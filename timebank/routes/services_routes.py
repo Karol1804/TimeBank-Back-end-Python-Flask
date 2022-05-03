@@ -141,7 +141,7 @@ def api_single_service_create():
     except ValidationError as e:
         return jsonify({'error': str(e)}), 400
 
-    if req_data['estimate']:
+    if 'estimate' in req_data:
         try:
             is_number(req_data['estimate'])
             is_estimate(req_data['estimate'])
