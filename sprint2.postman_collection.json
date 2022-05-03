@@ -140,6 +140,40 @@
 					"response": []
 				},
 				{
+					"name": "Services by avg_rating",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://157.245.27.101:5000/api/v1/services?field=avg_rating&sort=desc",
+							"protocol": "http",
+							"host": [
+								"157",
+								"245",
+								"27",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"services"
+							],
+							"query": [
+								{
+									"key": "field",
+									"value": "avg_rating"
+								},
+								{
+									"key": "sort",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Service by id",
 					"request": {
 						"method": "GET",
