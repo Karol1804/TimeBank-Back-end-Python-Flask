@@ -18,6 +18,7 @@ from timebank.libs.response_helpers import record_sort_params_handler, get_all_d
 def api_users():
     sort_field, sort_dir, valid = record_sort_params_handler(request.args, User)
     if not valid:
+        app.logger.error(f"{request.remote_addr}, Request in get all users failed, check your request and try again")
         return '', 400
     db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(User)).all()
     # Pokial je aspon jeden objekt v db_objs prejdeme podmienkou
@@ -31,9 +32,10 @@ def api_users():
                 user_name=obj.user_name,
                 time_account=obj.time_account,
             ))
-
+        app.logger.info(f"{request.remote_addr}, All users have been loaded successfully.")
         return jsonify(response_obj), 200
     else:
+        app.logger.warning(f"{request.remote_addr}, No user has been found.")
         return '{"Message": "No user to be found."}', 404
 
 
@@ -47,6 +49,7 @@ def api_single_user_get(user_id):
     obj = db_query.get(user_id)
 
     if not obj:
+        app.logger.warning(f"{request.remote_addr}, Selected user: {user_id} doesn't exist.")
         return '{"Message": "No user to be found."}', 404
 
     response_obj = [dict(
@@ -57,19 +60,21 @@ def api_single_user_get(user_id):
     )]
 
     response = jsonify(response_obj)
+    app.logger.info(f"{request.remote_addr}, Selected user: {user_id} has been loaded successfully.")
     return response, 200
 
 
 # Funkcia na updatovanie pouzivatela z databazi
 @app.route('/api/v1/user/<user_id>', methods=['PUT'])
+@jwt_required()
 def api_single_user_put(user_id):
 
     db_query = db.session.query(User)
     db_obj = db_query.get(user_id)
-
     if not db_obj:
+        app.logger.warning(f"{request.remote_addr}, Selected user: {user_id} does not exist.")
         return '{"message": "No user to be found."}', 404
-
+    old_obj = [db_obj.phone, db_obj.user_name, db_obj.time_account]
     req_data = None
     # Skontroluje ci je telo poziadavky vo formate application/json a ak je tak z neho vytiahne data
     if request.content_type == 'application/json':
@@ -84,20 +89,20 @@ def api_single_user_put(user_id):
             phone_number_match(req_data['phone'])
             db_obj.phone = req_data['phone']
         except ValidationError as e:
+            app.logger.error(f"{request.remote_addr}, Validation error: "
+                             f"Updating user failed, phone number is not valid format.")
             return jsonify({'error': str(e)}), 400
 
     if 'user_name' in req_data:
         db_obj.user_name = req_data['user_name']
-
-    # Podmienka ktora zahashuje heslo ktore uzivatej zada v requeste
-    # if 'password' in req_data:
-    #     db_obj.password = generate_password_hash(req_data['password'])
 
     # Podmienka ktora skontroluje ci je v requeste cislo. Pokial nie tak vyhodi error
     if 'time_account' in req_data:
         try:
             is_number(req_data['time_account'])
         except ValidationError as e:
+            app.logger.error(f"{request.remote_addr}, Validation error: "
+                             f"Updating user failed, time account is not a number.")
             return jsonify({'error': str(e)}), 400
 
         db_obj.time_account = int(req_data['time_account'])
@@ -107,13 +112,20 @@ def api_single_user_put(user_id):
         db.session.commit()
         db.session.refresh(db_obj)
     except IntegrityError as e:
+        app.logger.error(f"{request.remote_addr}, Integrity error: "
+                         f"There has been problem with updating user in database. Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
 
-    return '{"Message": "user succesfully updated."}', 204
+    app.logger.info(f"{request.remote_addr}, User: {user_id} has been updated by requestor: {get_jwt_identity()}\n"
+                    f"  Phone has been changed from {old_obj[0]} to {db_obj.phone},\n"
+                    f"  Username has been changed from {old_obj[1]} to {db_obj.user_name},\n"
+                    f"  Time account has been changed from {old_obj[2]} to {db_obj.time_account}.")
+    return '{"Message": "user successfully updated."}', 204
 
 
 # Funkcia na zmazanie pouzivatela z databazi
 @app.route('/api/v1/user/<user_id>', methods=['DELETE'])
+@jwt_required()
 def api_single_user_delete(user_id):
 
     db_query = db.session.query(User)
@@ -121,15 +133,21 @@ def api_single_user_delete(user_id):
     db_obj = db_query.filter_by(id=user_id)
 
     if not db_test:
+        app.logger.warning(f"{request.remote_addr}, Selected user: {user_id} does not exist.")
         return '{"Message": "No user to be found."}', 404
 
     try:
         db_obj.delete()
         db.session.commit()
     except IntegrityError as e:
+        app.logger.error(f"{request.remote_addr}, Integrity error: "
+                         f"There has been problem with deleting user from the database. "
+                         f"Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
     else:
-        return '{"Message": "User succesfully deleted."}', 204
+        app.logger.info(f"{request.remote_addr}, Selected user: {user_id} "
+                        f"has been deleted successfully by requestor: {get_jwt_identity()}.")
+        return '{"Message": "User successfully deleted."}', 204
 
 
 # Funckia na vytvorenie uzivatela a pridania ho do databazi
@@ -145,15 +163,17 @@ def api_single_user_create():
     try:
         phone_number_match(req_data['phone'])
     except ValidationError as e:
+        app.logger.error(f"{request.remote_addr}, Validation error: "
+                         f"Creating user failed, check your request and try again.")
         return jsonify({'error': str(e)}), 400
 
     # Z tela poziadavky vytiahneme cislo a vlozime ho do databazy
     db_obj.phone = req_data['phone']
     # Z tela poziadavky vytiahneme heslo, zahashujeme ho a vlozime ho do databazy
     if req_data['password'] == req_data['password_val']:
-        if len(req_data['password']) > 4:
-            db_obj.password = generate_password_hash(req_data['password'])
+        db_obj.password = generate_password_hash(req_data['password'])
     else:
+        app.logger.warning(f"{request.remote_addr}, Passwords are not equal while creating user, try again.")
         return '{"Message": "Passwords are not equal."}', 400
     # Z tela poziadavky vytiahneme meno a vlozime ho do databazy
     db_obj.user_name = req_data['user_name']
@@ -166,7 +186,15 @@ def api_single_user_create():
         db.session.refresh(db_obj)
 
     except IntegrityError as e:
+        app.logger.error(f"{request.remote_addr}, Integrity error: "
+                         f"There has been problem with creating new user into database. "
+                         f"Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
+    app.logger.info(f"{request.remote_addr}, User has been created successfully, New user has following parameters:\n"
+                    f"  Id: {db_obj.id},\n"
+                    f"  Phone: {db_obj.phone},\n"
+                    f"  Username: {db_obj.user_name},\n"
+                    f"  Time account {db_obj.time_account}.")
 
     return api_single_user_get(db_obj.id)
 
@@ -178,6 +206,7 @@ def api_single_user_set_password(user_id):
     db_query = db.session.query(User)
     db_obj = db_query.get(user_id)
     if not db_obj:
+        app.logger.warning(f"{request.remote_addr}, Selected user: {user_id} does not exist.")
         return '{"Message": "No user to be found."}', 404
 
     req_data = None
@@ -189,40 +218,43 @@ def api_single_user_set_password(user_id):
     if req_data['password'] == req_data['password_val']:
         db_obj.password = generate_password_hash(req_data['password'])
     else:
+        app.logger.warning(f"{request.remote_addr}, Passwords are not equal while setting password, try again.")
         return '{"Message": "Passwords are not equal."}', 400
     try:
         db.session.commit()
     except IntegrityError as e:
+        app.logger.error(f"{request.remote_addr}, Integrity error: "
+                         f"There has been problem with setting password for user: {user_id}. "
+                         f"Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
-
+    app.logger.info(f"{request.remote_addr}, Selected user: {user_id} password has been changed.")
     return '{"Message": "User password succesfully changed."}', 204
 
 
 # Funkcia na prihlasenie uzivatela
 @app.route('/api/v1/user/login', methods=['POST'])
 def api_single_user_login():
-    if request.method == 'POST':
-        req_data = None
-        if request.content_type == 'application/json':
-            req_data = request.json
-        elif request.content_type == 'application/x-www-form-urlencoded':
-            req_data = request.form
-        # Podmienka ktora kontroluje ci mame v tele poziadavky telefonne cislo a heslo
-        if not req_data['phone'] and not req_data['password']:
-            return '{"Message": "Phone number and password not defined"}', 400
-        phone = req_data['phone']
-        password = req_data['password']
-
-    else:
-        return '{"Message": "Method not allowed."}', 400
+    req_data = None
+    if request.content_type == 'application/json':
+        req_data = request.json
+    elif request.content_type == 'application/x-www-form-urlencoded':
+        req_data = request.form
+    # Podmienka ktora kontroluje ci mame v tele poziadavky telefonne cislo a heslo
+    if not req_data['phone'] and not req_data['password']:
+        app.logger.warning(f"{request.remote_addr}, Login failed, check your request and try again")
+        return '{"Message": "Phone number and password not defined"}', 400
+    phone = req_data['phone']
+    password = req_data['password']
 
     db_query = db.session.query(User)
     try:
         db_obj = db_query.filter_by(phone=phone).one()
     except NoResultFound:
+        app.logger.warning(f"{request.remote_addr}, Phone number has been not found in database, cannot login")
         return '{"Message": "Phone number doesnt exist."}', 404
 
     if not check_password_hash(db_obj.password, password):
+        app.logger.warning(f"{request.remote_addr}, Password is not correct, cannot login")
         return '{"Message": "Password not correct."}', 401
 
     identity = phone
@@ -234,13 +266,14 @@ def api_single_user_login():
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
 
+    app.logger.info(f"{request.remote_addr}, Selected user: {identity} has logged in successfully.")
     return response, 201
 
 
 # Funkcia na odhlasenie pouzivatela
 @app.route('/api/v1/user/logout', methods=['POST'])
 # Metoda vyzauje JWT-token
-@jwt_required(optional=True)
+@jwt_required()
 def api_single_user_logout():
     # get_jwt_identity je funckia ktora zo zadaneho tokenu vytiahne identitu
     identity = get_jwt_identity()
@@ -248,10 +281,12 @@ def api_single_user_logout():
     try:
         db_obj = db_query.filter_by(phone=identity).one()
     except NoResultFound:
+        app.logger.error(f"{request.remote_addr}, User with this token does not exist, log out failed.")
         return '{"Message": "No result found."}', 400
 
     response = jsonify({'logout': True, "msg": "see ya again"})
     unset_jwt_cookies(response)
+    app.logger.info(f"{request.remote_addr}, Selected user: {get_jwt_identity()} has logged out successfully.")
     return response, 201
 
 
@@ -264,6 +299,7 @@ def api_single_user_profile():
     try:
         obj = db_query.filter_by(phone=phone).one()
     except NoResultFound:
+        app.logger.error(f"{request.remote_addr}, User with this token does not exist, can not show user profile.")
         return '{"Message": "No result found."}', 404
     db_query2 = db.session.query(Serviceregister)
     obj2 = db_query2.filter_by(service_id=Service.id).all()
@@ -297,6 +333,7 @@ def api_single_user_profile():
     )]
 
     response = jsonify(response_obj)
+    app.logger.info(f"{request.remote_addr}, Selected user: {get_jwt_identity()} has loaded his profile successfully.")
     return response, 200
 
 
@@ -312,4 +349,5 @@ def refresh():
 
     resp = jsonify({'refresh': True})
     set_access_cookies(resp, access_token)
+    app.logger.info(f"Token has been successfully refreshed for selected user: {get_jwt_identity()}")
     return resp, 200

@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime, timezone, timedelta
 from flask import Flask
 from flask_cors import CORS
@@ -15,8 +16,22 @@ db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 jwt = JWTManager(app)
 
-# logging.basicConfig(filename='record.log', level=logging.DEBUG,
-#                     format=f'%(message)s')
+
+@app.before_first_request
+def before_first_request():
+    log_level = logging.DEBUG
+
+    for handler in app.logger.handlers:
+        app.logger.removeHandler(handler)
+
+    log_file = os.path.join('app.log')
+    handler = logging.FileHandler(log_file)
+    handler.setLevel(log_level)
+    app.logger.addHandler(handler)
+
+    app.logger.setLevel(log_level)
+    default_formatter = logging.Formatter("[%(asctime)s] %(levelname)s %(message)s", datefmt='%y %b %d - %H:%M:%S')
+    handler.setFormatter(default_formatter)
 
 
 @app.after_request

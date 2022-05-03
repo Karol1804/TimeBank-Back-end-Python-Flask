@@ -1,3 +1,0 @@
-docker build -t timebank_app .
-
-docker run --name timebank_app -p 5000:5000 timebank_app
