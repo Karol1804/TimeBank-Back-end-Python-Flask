@@ -606,7 +606,7 @@ paths:
       - name: rating
         in: path
         description: Rating
-        required: true
+        required: false
         schema:
           type: integer
           format: int64
