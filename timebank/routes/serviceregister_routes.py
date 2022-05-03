@@ -38,7 +38,8 @@ def api_get_all_service_register():
                 ),
                 hours=obj.hours,
                 service_status=obj.service_status.name,
-                end_time=obj.end_time
+                end_time=obj.end_time,
+                rating=obj.rating
             ))
 
         return jsonify(response_obj), 200
@@ -70,7 +71,8 @@ def api_single_registerservice_get(serviceregister_id):
         ),
         hours=obj.hours,
         service_status=obj.service_status.name,
-        end_time=obj.end_time
+        end_time=obj.end_time,
+        rating=obj.rating
     )]
 
     response = jsonify(response_obj)
