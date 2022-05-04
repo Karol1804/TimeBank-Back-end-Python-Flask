@@ -37,7 +37,7 @@ test-job:
 #    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; export FLASK_ENV=development; screen -m -d python3 run.py"
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; export FLASK_APP=test.py; export FLASK_ENV=development; python3 test.py"
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "pkill python3"
-    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm public.zip"
+#    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm public.zip"
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm -r timebank"
     - echo "Testing finished successfully"
 
