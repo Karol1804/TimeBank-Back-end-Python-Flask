@@ -45,7 +45,7 @@ def api_single_service_get(services_id):
     obj = db_query.get(services_id)
 
     if not obj:
-        app.logger.warning(f"{request.remote_addr}, Selected user: {services_id} doesn't exist.")
+        app.logger.warning(f"{request.remote_addr}, Selected service: {services_id} doesn't exist.")
         return {'Bad Request': f'Service {services_id} not found'}, 400
 
     response_obj = [dict(
@@ -87,8 +87,10 @@ def api_single_service_put(services_id):
         try:
             is_number(req_data['user_id'])
             user_exists(req_data['user_id'])
-        except ValidationError:
-            return '', 400
+        except ValidationError as e:
+            app.logger.error(f"{request.remote_addr}, Validation error: "
+                             f"Updating services failed, user id is not a number.")
+            return jsonify({'error': str(e)}), 400
 
         db_obj.user_id = int(req_data['user_id'])
 
@@ -195,8 +197,7 @@ def api_single_service_create():
                     f"  Id: {db_obj.id},\n"
                     f"  Title: {db_obj.title},\n"
                     f"  User ID: {db_obj.user_id},\n"
-                    f"  Estimate: {db_obj.estimate},\n"
-                    f"  Average rating: {db_obj.avg_rating}.")
+                    f"  Estimate: {db_obj.estimate}.\n")
     return api_single_service_get(db_obj.id)
 
 
