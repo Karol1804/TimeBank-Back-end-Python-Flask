@@ -41,7 +41,6 @@ build-job2:
   stage: build
   tags:
     - python
-  needs: ['test-job']
   script:
     - zip -r public.zip timebank requirements.txt run.py
   artifacts:
@@ -54,7 +53,7 @@ deploy-to-test-job:
   stage: deploy
   tags:
     - python
-  needs: ['build-job2']
+  needs: ['build-job2', 'test-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
@@ -77,7 +76,7 @@ deploy-to-prod-job:
   stage: deploy
   tags:
     - python
-  needs: ['deploy-to-test-job', 'build-job2']
+  needs: ['deploy-to-test-job', 'build-job2', 'test-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
