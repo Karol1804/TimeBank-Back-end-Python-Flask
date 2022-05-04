@@ -9,10 +9,10 @@ build-job1:
   tags:
     - python
   script:
-    - zip -r test_server.zip timebank requirements.txt test.py
+    - zip -r test.zip timebank requirements.txt test.py
   artifacts:
     paths:
-      - test_server.zip
+      - test.zip
   only:
     - main
 
@@ -30,11 +30,11 @@ test-job:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
   script:
-    - scp -o StrictHostKeyChecking=no test_server.zip admin@35.170.96.96:/home/admin/timebank_app
+    - scp -o StrictHostKeyChecking=no test.zip admin@35.170.96.96:/home/admin/timebank_app
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; unzip test_server.zip"
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; pip install -r requirements.txt"
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; export FLASK_APP=test.py; export FLASK_ENV=development; python3 test.py"
-    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm -r timebank; rm test_server.zip test.py app.log requirements.txt"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm -r timebank; rm test.zip test.py app.log requirements.txt"
     - echo "Testing finished successfully"
 
 
