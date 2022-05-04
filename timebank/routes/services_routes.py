@@ -13,6 +13,7 @@ from timebank.libs.response_helpers import record_sort_params_handler, get_all_d
 def api_services():
     sort_field, sort_dir, valid = record_sort_params_handler(request.args, Service)
     if not valid:
+        app.logger.error(f"{request.remote_addr}, Request in get all services failed, check your request and try again")
         return {'Bad Request': 'services not found'}, 400
 
     db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(Service)).all()
@@ -31,8 +32,10 @@ def api_services():
                 avg_rating=obj.avg_rating,
                 estimate=obj.estimate,
             ))
+        app.logger.info(f"{request.remote_addr}, All services have been loaded successfully.")
         return jsonify(response_obj), 200
     else:
+        app.logger.warning(f"{request.remote_addr}, No service has been found.")
         return '', 404
 
 
@@ -42,6 +45,7 @@ def api_single_service_get(services_id):
     obj = db_query.get(services_id)
 
     if not obj:
+        app.logger.warning(f"{request.remote_addr}, Selected user: {services_id} doesn't exist.")
         return {'Bad Request': f'Service {services_id} not found'}, 400
 
     response_obj = [dict(
@@ -58,18 +62,21 @@ def api_single_service_get(services_id):
     )]
 
     response = jsonify(response_obj)
+    app.logger.info(f"{request.remote_addr}, Selected service: {services_id} has been loaded successfully.")
     return response, 200
 
 
 @app.route('/api/v1/service/<services_id>', methods=['PUT'])
+@jwt_required()
 def api_single_service_put(services_id):
 
     db_query = db.session.query(Service)
     db_obj = db_query.get(services_id)
 
     if not db_obj:
+        app.logger.warning(f"{request.remote_addr}, Selected service: {services_id} does not exist.")
         return {'Bad Request': f'Service {services_id} not found'}, 400
-
+    old_obj = [db_obj.title, db_obj.user_id, db_obj.estimate]
     req_data = None
     if request.content_type == 'application/json':
         req_data = request.json
@@ -93,6 +100,8 @@ def api_single_service_put(services_id):
             is_number(req_data['estimate'])
             is_estimate(req_data['estimate'])
         except ValidationError as e:
+            app.logger.error(f"{request.remote_addr}, Validation error: "
+                             f"Updating services failed, estimate is not a number or not in range.")
             return jsonify({'error': str(e)}), 400
 
         db_obj.estimate = req_data['estimate']
@@ -101,12 +110,18 @@ def api_single_service_put(services_id):
         db.session.commit()
         db.session.refresh(db_obj)
     except IntegrityError as e:
+        app.logger.error(f"{request.remote_addr}, Integrity error: There has been problem "
+                         f"with updating service in the database. Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
-
+    app.logger.info(f"{request.remote_addr}, User: {services_id} has been updated by requestor: {get_jwt_identity()}\n"
+                    f"  Title has been changed from \"{old_obj[0]}\" to \"{db_obj.title}\",\n"
+                    f"  User ID has been changed from {old_obj[1]} to {db_obj.user_id},\n"
+                    f"  Estimate has been changed from {old_obj[2]} to {db_obj.estimate}.")
     return '', 204
 
 
 @app.route('/api/v1/service/<services_id>', methods=['DELETE'])
+@jwt_required()
 def api_single_service_delete(services_id):
 
     db_query = db.session.query(Service)
@@ -114,14 +129,20 @@ def api_single_service_delete(services_id):
     db_obj = db_query.filter_by(id=services_id)
 
     if not db_test:
+        app.logger.warning(f"{request.remote_addr}, Selected service: {services_id} does not exist.")
         return {'Bad Request': f'Service {services_id} not found'}, 400
 
     try:
         db_obj.delete()
         db.session.commit()
     except IntegrityError as e:
+        app.logger.error(f"{request.remote_addr}, Integrity error: "
+                         f"There has been problem with deleting service from the database. "
+                         f"Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
     else:
+        app.logger.info(f"{request.remote_addr}, Selected service: {services_id} "
+                        f"has been deleted successfully by requestor: {get_jwt_identity()}.")
         return '', 204
 
 
@@ -143,6 +164,8 @@ def api_single_service_create():
         is_number(req_data['user_id'])
         user_exists(req_data['user_id'])
     except ValidationError as e:
+        app.logger.error(f"{request.remote_addr}, Validation error: "
+                         f"Creating service failed, check user_id in your request and try again.")
         return jsonify({'error': str(e)}), 400
 
     if 'estimate' in req_data:
@@ -151,6 +174,8 @@ def api_single_service_create():
             is_estimate(req_data['estimate'])
             db_obj.estimate = int(req_data['estimate'])
         except ValidationError as e:
+            app.logger.error(f"{request.remote_addr}, Validation error: "
+                             f"Creating service failed, check estimate in your request and try again.")
             return jsonify({'error': str(e)}), 400
 
     db_obj.user_id = obj2.id
@@ -161,8 +186,17 @@ def api_single_service_create():
         db.session.commit()
         db.session.refresh(db_obj)
     except IntegrityError as e:
+        app.logger.error(f"{request.remote_addr}, Integrity error: "
+                         f"There has been problem with creating new service into database. "
+                         f"Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
-
+    app.logger.info(f"{request.remote_addr}, Service has been created successfully, "
+                    f"New service has following parameters:\n"
+                    f"  Id: {db_obj.id},\n"
+                    f"  Title: {db_obj.title},\n"
+                    f"  User ID: {db_obj.user_id},\n"
+                    f"  Estimate: {db_obj.estimate},\n"
+                    f"  Average rating: {db_obj.avg_rating}.")
     return api_single_service_get(db_obj.id)
 
 
@@ -171,11 +205,13 @@ def api_single_service_create():
 def api_service_search():
     field, sort_dir, valid = record_sort_params_handler(request.args, Service)
     if not valid:
+        app.logger.warning(f"{request.remote_addr}, Search of services failed, check your request and try again.")
         return '', 400
 
     if request.args.get('s'):
         search_string = request.args.get('s')
     else:
+        app.logger.warning(f"{request.remote_addr}, Search of services failed, check your request and try again.")
         return '', 400
 
     response_obj = []
@@ -198,7 +234,7 @@ def api_service_search():
                     estimate=obj.estimate,
                     avg_rating=obj.avg_rating
                 ))
-
+    app.logger.info(f"{request.remote_addr}, Search of services has been completed successfully.")
     return jsonify(response_obj), 200
 
 
@@ -208,6 +244,8 @@ def api_service_user_id(user_id):
     sort_field, sort_dir, valid = record_sort_params_handler(request.args, Service)
 
     if not valid:
+        app.logger.warning(f"{request.remote_addr}, Search of services by user failed. "
+                           f"Check your request and try again.")
         return '', 400
 
     db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(Service)).all()
@@ -216,6 +254,8 @@ def api_service_user_id(user_id):
     obj = db_query.get(user_id)
 
     if not obj:
+        app.logger.warning(f"{request.remote_addr}, Search of services failed. Selected user with id: {user_id}"
+                           f" does not exist.")
         return '{"Message": "No user with that ID!"}', 404
 
     if len(db_objs):
@@ -230,7 +270,10 @@ def api_service_user_id(user_id):
                     rating=service.avg_rating,
                     user_id=obj.id,
                     service_id=service.id
-            ))
+                ))
+        app.logger.info(f"{request.remote_addr}, Service search has been completed successfully.")
         return jsonify(response_obj), 200
     else:
+        app.logger.warning(f"{request.remote_addr}, Service search failed, "
+                           f"no service has been found for user with selected id: {user_id}.")
         return '', 404

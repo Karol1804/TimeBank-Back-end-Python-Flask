@@ -112,13 +112,13 @@ def api_single_user_put(user_id):
         db.session.commit()
         db.session.refresh(db_obj)
     except IntegrityError as e:
-        app.logger.error(f"{request.remote_addr}, Integrity error: "
-                         f"There has been problem with updating user in database. Recheck your request and try again.")
+        app.logger.error(f"{request.remote_addr}, Integrity error: There has been problem "
+                         f"with updating user in the database. Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
 
     app.logger.info(f"{request.remote_addr}, User: {user_id} has been updated by requestor: {get_jwt_identity()}\n"
                     f"  Phone has been changed from {old_obj[0]} to {db_obj.phone},\n"
-                    f"  Username has been changed from {old_obj[1]} to {db_obj.user_name},\n"
+                    f"  Username has been changed from \"{old_obj[1]}\" to \"{db_obj.user_name}\",\n"
                     f"  Time account has been changed from {old_obj[2]} to {db_obj.time_account}.")
     return '{"Message": "user successfully updated."}', 204
 
