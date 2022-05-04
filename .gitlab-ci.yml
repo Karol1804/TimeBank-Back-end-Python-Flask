@@ -1,10 +1,11 @@
 stages:
-  - build
+  - build1
   - test
+  - build2
   - deploy
 
 build-job1:
-  stage: build
+  stage: build1
   tags:
     - python
   script:
@@ -38,7 +39,7 @@ test-job:
 
 
 build-job2:
-  stage: build
+  stage: build2
   tags:
     - python
   script:
