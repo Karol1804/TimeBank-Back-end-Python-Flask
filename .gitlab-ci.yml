@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
   - deploy
 
 build-job:
@@ -16,11 +17,35 @@ build-job:
   only:
     - main
 
+test-job:
+  stage: test
+  tags:
+    - python
+  needs: ['build-job']
+  allow_failure: false
+  before_script:
+    - apk add unzip
+    - apk add openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY2" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - scp -o StrictHostKeyChecking=no public.zip admin@35.170.96.96:/home/admin/timebank_app
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; unzip public.zip"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; pip install -r requirements.txt"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; export FLASK_ENV=development; screen -m -d python3 run.py"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; cd timebank/tests; python3 test.py"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "pkill python3"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm public.zip"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm -r timebank"
+    - echo "Testing finished successfully"
+
 deploy-to-test-job:
   stage: deploy
   tags:
     - python
-  needs: ['build-job']
+  needs: ['test-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
@@ -43,7 +68,7 @@ deploy-to-prod-job:
   stage: deploy
   tags:
     - python
-  needs: ['deploy-to-test-job', 'build-job']
+  needs: ['deploy-to-test-job', 'test-job']
   before_script:
   - apk add unzip
   - apk add openssh-client
