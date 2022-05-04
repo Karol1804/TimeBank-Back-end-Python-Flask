@@ -8,6 +8,8 @@ build-job1:
   stage: build1
   tags:
     - python
+  before_script:
+    - apk add zip
   script:
     - zip -r test.zip timebank requirements.txt test.py
   artifacts:
@@ -42,6 +44,8 @@ build-job2:
   stage: build2
   tags:
     - python
+  before_script:
+    - apk add zip
   script:
     - zip -r public.zip timebank requirements.txt run.py
   artifacts:
