@@ -3,7 +3,7 @@ stages:
   - test
   - deploy
 
-build-job:
+build-job1:
   stage: build
   tags:
     - python
@@ -11,13 +11,9 @@ build-job:
     - apk add zip
   script:
     - zip -r test_server.zip timebank requirements.txt test.py
-    - zip -r beta_server.zip timebank requirements.txt run.py
-    - zip -r prod_server.zip timebank requirements.txt run.py
   artifacts:
     paths:
       - test_server.zip
-      - beta_server.zip
-      - prod_server.zip
   only:
     - main
 
@@ -42,11 +38,27 @@ test-job:
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm -r timebank; rm test_server.zip test.py app.log requirements.txt"
     - echo "Testing finished successfully"
 
+
+build-job2:
+  stage: build
+  tags:
+    - python
+  needs: ['test-job']
+  before_script:
+    - apk add zip
+  script:
+    - zip -r public.zip timebank requirements.txt run.py
+  artifacts:
+    paths:
+      - public.zip
+  only:
+    - main
+
 deploy-to-test-job:
   stage: deploy
   tags:
     - python
-  needs: ['test-job']
+  needs: ['build-job2']
   before_script:
   - apk add unzip
   - apk add openssh-client
@@ -55,21 +67,21 @@ deploy-to-test-job:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   script:
-    - scp -o StrictHostKeyChecking=no beta_server.zip automation@157.245.27.101:/home/automation/timebank_app
+    - scp -o StrictHostKeyChecking=no public.zip automation@157.245.27.101:/home/automation/timebank_app
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "pkill python3"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm -r timebank"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm requirements.txt app.log run.py"
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip beta_server.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; unzip public.zip.zip"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate; pip install -r requirements.txt"
     - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; export FLASK_ENV=development; screen -m -d python3 run.py"
-    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm beta_server.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.245.27.101 "cd /home/automation/timebank_app; rm public.zip.zip"
     - echo "Build for testing finished"
 
 deploy-to-prod-job:
   stage: deploy
   tags:
     - python
-  needs: ['deploy-to-test-job', 'test-job']
+  needs: ['deploy-to-test-job', 'build-job2']
   before_script:
   - apk add unzip
   - apk add openssh-client
@@ -79,12 +91,12 @@ deploy-to-prod-job:
   - chmod 700 ~/.ssh
   when: manual
   script:
-    - scp -o StrictHostKeyChecking=no prod_server.zip automation@157.230.79.85:/home/automation/timebank_app
+    - scp -o StrictHostKeyChecking=no public.zip automation@157.230.79.85:/home/automation/timebank_app
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "pkill python3"
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; rm -r timebank"
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; rm requirements.txt app.log run.py"
-    - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; unzip prod_server.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; unzip public.zip"
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; source venv/bin/activate; pip install -r requirements.txt"
     - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; source venv/bin/activate; export FLASK_APP=run.py; screen -m -d python3 run.py"
-    - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; rm prod_server.zip"
+    - ssh -o StrictHostKeyChecking=no automation@157.230.79.85 "cd /home/automation/timebank_app; rm public.zip"
     - echo "Building for production finished"
