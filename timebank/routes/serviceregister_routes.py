@@ -85,8 +85,10 @@ def api_single_registerservice_get(serviceregister_id):
 
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['PUT'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_serviceregister_put(serviceregister_id):
+    if get_jwt_identity() is None:
+        return '', 401
     db_query = db.session.query(Serviceregister)
     db_obj = db_query.get(serviceregister_id)
 
@@ -143,8 +145,10 @@ def api_single_serviceregister_put(serviceregister_id):
 
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['DELETE'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_registerservice_delete(serviceregister_id):
+    if get_jwt_identity() is None:
+        return '', 401
     db_query = db.session.query(Serviceregister)
     db_test = db_query.get(serviceregister_id)
     db_obj = db_query.filter_by(id=serviceregister_id)
@@ -168,8 +172,10 @@ def api_single_registerservice_delete(serviceregister_id):
 
 
 @app.route('/api/v1/serviceregister-create', methods=['POST'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_serviceregister_create():
+    if get_jwt_identity() is None:
+        return '', 401
     db_obj = Serviceregister()
 
     req_data = None
@@ -219,8 +225,10 @@ def api_single_serviceregister_create():
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/', methods=['PUT'])
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
+    if get_jwt_identity() is None:
+        return '', 401
     try:
         is_number(serviceregister_id)
     except ValidationError as e:

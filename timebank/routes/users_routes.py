@@ -66,9 +66,10 @@ def api_single_user_get(user_id):
 
 # Funkcia na updatovanie pouzivatela z databazi
 @app.route('/api/v1/user/<user_id>', methods=['PUT'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_user_put(user_id):
-
+    if get_jwt_identity() is None:
+        return '', 401
     db_query = db.session.query(User)
     db_obj = db_query.get(user_id)
     if not db_obj:
@@ -125,9 +126,10 @@ def api_single_user_put(user_id):
 
 # Funkcia na zmazanie pouzivatela z databazi
 @app.route('/api/v1/user/<user_id>', methods=['DELETE'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_user_delete(user_id):
-
+    if get_jwt_identity() is None:
+        return '', 401
     db_query = db.session.query(User)
     db_test = db_query.get(user_id)
     db_obj = db_query.filter_by(id=user_id)
@@ -273,8 +275,10 @@ def api_single_user_login():
 # Funkcia na odhlasenie pouzivatela
 @app.route('/api/v1/user/logout', methods=['POST'])
 # Metoda vyzauje JWT-token
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_user_logout():
+    if get_jwt_identity() is None:
+        return '', 401
     # get_jwt_identity je funckia ktora zo zadaneho tokenu vytiahne identitu
     identity = get_jwt_identity()
     db_query = db.session.query(User)
@@ -292,8 +296,10 @@ def api_single_user_logout():
 
 # Funkcia na vypisanie profilu uzivatela
 @app.route('/api/v1/user/profile', methods=['GET'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_user_profile():
+    if get_jwt_identity() is None:
+        return '', 401
     phone = get_jwt_identity()
     db_query = db.session.query(User)
     try:

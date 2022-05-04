@@ -67,8 +67,10 @@ def api_single_service_get(services_id):
 
 
 @app.route('/api/v1/service/<services_id>', methods=['PUT'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_service_put(services_id):
+    if get_jwt_identity() is None:
+        return '', 401
 
     db_query = db.session.query(Service)
     db_obj = db_query.get(services_id)
@@ -123,9 +125,10 @@ def api_single_service_put(services_id):
 
 
 @app.route('/api/v1/service/<services_id>', methods=['DELETE'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_service_delete(services_id):
-
+    if get_jwt_identity() is None:
+        return '', 401
     db_query = db.session.query(Service)
     db_test = db_query.get(services_id)
     db_obj = db_query.filter_by(id=services_id)
@@ -149,8 +152,10 @@ def api_single_service_delete(services_id):
 
 
 @app.route('/api/v1/service-create', methods=['POST'])
-@jwt_required()
+@jwt_required(optional=True)
 def api_single_service_create():
+    if get_jwt_identity() is None:
+        return '', 401
     db_obj = Service()
 
     req_data = None
