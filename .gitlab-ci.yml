@@ -10,7 +10,7 @@ build-job:
   before_script:
     - apk add zip
   script:
-    - zip -r public.zip timebank requirements.txt
+    - zip -r public.zip timebank requirements.txt test.py
   artifacts:
     paths:
       - public.zip
