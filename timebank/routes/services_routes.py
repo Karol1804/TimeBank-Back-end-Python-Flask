@@ -237,6 +237,8 @@ def api_service_search():
                     id=obj.id,
                     title=obj.title,
                     user_id=obj.user_id,
+                    user_name=obj.User.user_name,
+                    phone=obj.User.phone,
                     estimate=obj.estimate,
                     avg_rating=obj.avg_rating
                 ))
