@@ -202,7 +202,7 @@ def api_single_service_create():
                     f"  Id: {db_obj.id},\n"
                     f"  Title: {db_obj.title},\n"
                     f"  User ID: {db_obj.user_id},\n"
-                    f"  Estimate: {db_obj.estimate}.\n")
+                    f"  Estimate: {db_obj.estimate}.")
     return api_single_service_get(db_obj.id)
 
 
@@ -234,17 +234,17 @@ def api_service_search():
 
             for obj in db_objs:
                 response_obj.append(dict(
-                id=obj.id,
-                title=obj.title,
-                User=dict(
-                    id=obj.User.id,
-                    phone=obj.User.phone,
-                    user_name=obj.User.user_name,
-                    time_account=obj.User.time_account,
-                ),
-                avg_rating=obj.avg_rating,
-                estimate=obj.estimate,
-            ))
+                    id=obj.id,
+                    title=obj.title,
+                    User=dict(
+                        id=obj.User.id,
+                        phone=obj.User.phone,
+                        user_name=obj.User.user_name,
+                        time_account=obj.User.time_account,
+                    ),
+                    avg_rating=obj.avg_rating,
+                    estimate=obj.estimate,
+                ))
     app.logger.info(f"{request.remote_addr}, Search of services has been completed successfully.")
     return jsonify(response_obj), 200
 

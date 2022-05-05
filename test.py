@@ -1,19 +1,16 @@
-try:
-    from timebank import app
-    import unittest
-    import json
-except Exception as e:
-    print("Some modules are Missing {}".format(e))
+from timebank import app
+import unittest
+import json
 
 
 class UsersTest(unittest.TestCase):
-    def test_index(self):
+    def test_get_all_users_index(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/users")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
-    def test_index_content(self):
+    def test_get_all_users_index_content(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/users")
         self.assertEqual(response.content_type, "application/json")
@@ -34,13 +31,13 @@ class UsersTest(unittest.TestCase):
 
 
 class ServicesTest(unittest.TestCase):
-    def test_index(self):
+    def test_get_all_services_index(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/services")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
-    def test_index_content(self):
+    def test_get_all_services_index_content(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/services")
         self.assertEqual(response.content_type, "application/json")
@@ -63,13 +60,13 @@ class ServicesTest(unittest.TestCase):
 
 
 class ServiceregisterTest(unittest.TestCase):
-    def test_index(self):
+    def test_index_content_index(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/serviceregister")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
-    def test_index_content(self):
+    def test_index_content_index_content(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/serviceregister")
         self.assertEqual(response.content_type, "application/json")
