@@ -17,8 +17,8 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    # DB_HOST = '127.0.0.1'
-    DB_HOST = '157.230.79.85'
+    DB_HOST = '127.0.0.1'
+    # DB_HOST = '157.230.79.85'
     DB_PASSWORD = "Fej1chahgheebohxohxi"
     DB_PORT = '33306'
     DB_NAME = "timebank"
@@ -34,8 +34,8 @@ class DevelopmentConfig(Config):
     JWT_COOKIE_SECURE = False
     JWT_COOKIE_CSRF_PROTECT = False
     TESTING = True
-    # DB_HOST = '127.0.0.1'
-    DB_HOST = '157.245.27.101'
+    DB_HOST = '127.0.0.1'
+    # DB_HOST = '157.245.27.101'
     DB_PASSWORD = "ue1roo0uawechai5nieg1B"
     DB_PORT = '33306'
     DB_NAME = "timebank"
