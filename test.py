@@ -29,6 +29,34 @@ class UsersTest(unittest.TestCase):
         assert type(res[0]['time_account']) is int
         print("test_get_all_users finished successfully")
 
+    def test_get_one_user_index_content(self):
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/user/1")
+        self.assertEqual(response.content_type, "application/json")
+
+    def test_put_one_user_index_content(self):
+        tester = app.test_client(self)
+        response = tester.put("/api/v1/user/1")
+        self.assertEqual(response.content_type, "text/html; charset=utf-8")
+
+    def test_delete_one_user_index_content(self):
+        tester = app.test_client(self)
+        response = tester.delete("/api/v1/user/1")
+        self.assertEqual(response.content_type, "text/html; charset=utf-8")
+
+    def test_login_user_index_content(self):
+        tester = app.test_client(self)
+        response = tester.post("/api/v1/user/login", json={
+            'phone': '+421 999 999999',
+            'password': 'testing'
+        })
+        self.assertEqual(response.content_type, "application/json")
+        print(response.json)
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 201)
+
+
+
 
 class ServicesTest(unittest.TestCase):
     def test_get_all_services_index(self):
