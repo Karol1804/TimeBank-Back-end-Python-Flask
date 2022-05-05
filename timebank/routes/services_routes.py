@@ -221,7 +221,7 @@ def api_service_search():
         return '', 400
 
     response_obj = []
-    if len(search_string) > 1:
+    if len(search_string) > 2:
         db_query = db.session.query(Service)
         db_filter = db_query.filter(Service.title.like('%' + search_string + '%'))
 
@@ -236,11 +236,11 @@ def api_service_search():
                 response_obj.append(dict(
                     id=obj.id,
                     title=obj.title,
-                    user_id=obj.user_id,
                     user_name=obj.User.user_name,
-                    phone=obj.User.phone,
                     estimate=obj.estimate,
-                    avg_rating=obj.avg_rating
+                    avg_rating=obj.avg_rating,
+                    phone=obj.User.phone,
+                    user_id=obj.user_id,
                 ))
     app.logger.info(f"{request.remote_addr}, Search of services has been completed successfully.")
     return jsonify(response_obj), 200
