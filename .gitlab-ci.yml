@@ -35,7 +35,7 @@ test-job:
     - scp -o StrictHostKeyChecking=no test.zip admin@35.170.96.96:/home/admin/timebank_app
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; unzip test.zip"
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; pip install -r requirements.txt"
-    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; export FLASK_APP=test.py; export FLASK_ENV=development; python3 test.py"
+    - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; source venv/bin/activate; export FLASK_APP=test.py; export FLASK_ENV=testing; python3 test.py"
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm -r timebank; rm test.zip test.py requirements.txt"
     - echo "Testing finished successfully"
 
