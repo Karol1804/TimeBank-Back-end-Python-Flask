@@ -3,17 +3,23 @@ import unittest
 import json
 
 
+def login_user(self, phone, testing):
+    tester = app.test_client(self)
+    response = tester.post("/api/v1/user/login", json={
+        'phone': phone,
+        'password': testing
+    })
+    return response
+
+
 class UsersTest(unittest.TestCase):
     def test_get_all_users_index(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/users")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
-
-    def test_get_all_users_index_content(self):
-        tester = app.test_client(self)
-        response = tester.get("/api/v1/users")
         self.assertEqual(response.content_type, "application/json")
+
 
     def test_get_all_users(self):
         response = app.test_client().get('/api/v1/users')
@@ -27,33 +33,53 @@ class UsersTest(unittest.TestCase):
         assert type(res[0]['user_name']) is str
         assert 'time_account' in res[0]
         assert type(res[0]['time_account']) is int
-        print("test_get_all_users finished successfully")
 
     def test_get_one_user_index_content(self):
         tester = app.test_client(self)
         response = tester.get("/api/v1/user/1")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 200)
         self.assertEqual(response.content_type, "application/json")
 
+    def test_user_login_with_correct_data(self):
+        response = login_user(self, "+421 999 999999", "testing")
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 201)
+
+    def test_user_login_with_incorrect_phone(self):
+        response = login_user(self, "+421 999 999998", "testing")
+        self.assertEqual(response.content_type, "text/html; charset=utf-8")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+
+    def test_user_login_with_incorrect_password(self):
+        response = login_user(self, "+421 999 999999", "test")
+        self.assertEqual(response.content_type, "text/html; charset=utf-8")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 401)
+
     def test_put_one_user_index_content(self):
+        login = login_user(self, "+421 999 999999", "testing")
         tester = app.test_client(self)
-        response = tester.put("/api/v1/user/1")
+        token = login.json['access_token']
+        response = tester.put("/api/v1/user/2", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            phone='+421 999 888888',
+            password='test'
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
         self.assertEqual(response.content_type, "text/html; charset=utf-8")
 
     def test_delete_one_user_index_content(self):
+        login = login_user(self, "+421 999 999999", "testing")
         tester = app.test_client(self)
-        response = tester.delete("/api/v1/user/1")
+        token = login.json['access_token']
+        response = tester.delete("/api/v1/user/2", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
         self.assertEqual(response.content_type, "text/html; charset=utf-8")
 
-    def test_login_user_index_content(self):
-        tester = app.test_client(self)
-        response = tester.post("/api/v1/user/login", json={
-            'phone': '+421 999 999999',
-            'password': 'testing'
-        })
-        self.assertEqual(response.content_type, "application/json")
-        print(response.json)
-        statuscode = response.status_code
-        self.assertEqual(statuscode, 201)
 
 
 
