@@ -221,7 +221,7 @@ def api_service_search():
         return '', 400
 
     response_obj = []
-    if len(search_string) > 1:
+    if len(search_string) > 2:
         db_query = db.session.query(Service)
         db_filter = db_query.filter(Service.title.like('%' + search_string + '%'))
 
