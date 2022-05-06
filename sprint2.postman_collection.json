@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "43cc4de8-9d5c-4ee8-83d5-dff5ad8225bd",
+		"_postman_id": "e1a3519e-ce46-4d66-8a5f-21f05c774de3",
 		"name": "sprint2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -122,6 +122,15 @@
 						"method": "GET",
 						"header": [],
 						"url": "http://157.245.27.101:5000/api/v1/user/profile"
+					},
+					"response": []
+				},
+				{
+					"name": "User Services",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://157.245.27.101:5000/api/v1/user/services"
 					},
 					"response": []
 				}
@@ -370,7 +379,7 @@
 	"auth": {
 		"type": "bearer",
 		"bearer": {
-			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MDM3Nzg4MSwianRpIjoiMTIyZTcyNWQtZDMxZS00NmY4LTk3NTctMDAxYjExMzA5N2JhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MDM3Nzg4MSwiZXhwIjoxNjUwMzgxNDgxfQ.TvSiM0PrRpKDDihsjnYbQc9OLHaKnCRdh105ml3k_Q8"
+			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MTgzODM4NCwianRpIjoiNTM0OWY1ZmYtODc5OS00YzZmLWJlZmQtOTgzYjY0ZGFmYTNmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MTgzODM4NCwiZXhwIjoxNjUxODQxOTg0fQ.dqeFORwMeLEKvt4dJVnqRNTaglPOUwJEpoLHWf4ZvX4"
 		}
 	},
 	"event": [
