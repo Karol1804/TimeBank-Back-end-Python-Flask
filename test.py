@@ -145,6 +145,16 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 400)
 
+    def test0126(self):  # Vytvorenie usera bez password
+        tester = app.test_client(self)
+        response = tester.post("/api/v1/user-create", json={
+            'phone': '+421 900 000004',
+            'user_name': 'Testinguser4'
+        })
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+
     def test0201(self):
         response = login_user(self, "+421 900 000001", "test1")  # Test prihlasenie user 1
         self.assertEqual(response.content_type, "application/json")

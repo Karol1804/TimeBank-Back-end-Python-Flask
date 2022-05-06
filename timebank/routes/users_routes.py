@@ -163,7 +163,8 @@ def api_single_user_create():
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
 
-    if 'user_name' not in req_data or 'phone' not in req_data:
+    if 'user_name' not in req_data or 'phone' not in req_data \
+            or 'password' not in req_data or 'password_val' not in req_data:
         return jsonify({'error': 'request not valid'}), 400
 
     try:
