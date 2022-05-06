@@ -141,7 +141,7 @@ def api_single_serviceregister_put(serviceregister_id):
                     f"  Service status has been changed from \"{old_obj[3]}\" to \"{db_obj.service_status.name}\",\n"
                     f"  End time has been changed from {old_obj[4]} to {db_obj.end_time},\n"
                     f"  Rating has been changed from {old_obj[5]} to {db_obj.rating}.")
-    return '', 204
+    return jsonify({'Message': 'Serviceregister has been successfully edited'}), 204
 
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['DELETE'])
