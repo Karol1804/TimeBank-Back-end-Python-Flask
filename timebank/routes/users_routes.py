@@ -162,6 +162,10 @@ def api_single_user_create():
         req_data = request.json
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
+
+    if 'user_name' not in req_data or 'phone' not in req_data:
+        return jsonify({'error': 'request not valid'}), 400
+
     try:
         phone_number_match(req_data['phone'])
     except ValidationError as e:
