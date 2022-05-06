@@ -168,7 +168,7 @@ def api_single_registerservice_delete(serviceregister_id):
     else:
         app.logger.info(f"{request.remote_addr}, Selected serviceregister: {serviceregister_id} "
                         f"has been deleted successfully by requestor: {get_jwt_identity()}.")
-        return '', 204
+        return jsonify({'Message': 'Serviceregister has been successfully deleted'}), 204
 
 
 @app.route('/api/v1/serviceregister-create', methods=['POST'])
