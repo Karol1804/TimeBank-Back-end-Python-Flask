@@ -347,6 +347,32 @@ def api_single_user_profile():
     return response, 200
 
 
+@app.route('/api/v1/user/services', methods=['GET'])
+@jwt_required(optional=True)
+def api_single_user_services():
+    if get_jwt_identity() is None:
+        return '', 405
+
+    phone = get_jwt_identity()
+    user_query = db.session.query(User)
+    user_obj = user_query.filter_by(phone=phone).one()
+
+    ser_query = db.session.query(Service)
+    ser_obj = ser_query.filter_by(user_id=user_obj.id).all()
+
+    services = []
+    for s in ser_obj:
+        services.append(dict(
+            id=s.id,
+            title=s.title,
+            estimate=s.estimate,
+            avg_rating=s.avg_rating,
+        ))
+
+    response = jsonify(services)
+    return response, 200
+
+
 # Funckia na refresnutie tokenu
 @app.route('/token/refresh', methods=['POST'])
 @jwt_required(refresh=True)
