@@ -149,7 +149,7 @@ def api_single_user_delete(user_id):
     else:
         app.logger.info(f"{request.remote_addr}, Selected user: {user_id} "
                         f"has been deleted successfully by requestor: {get_jwt_identity()}.")
-        return '{"Message": "User successfully deleted."}', 204
+        return jsonify({'Message': 'Logout successfully'}), 204
 
 
 # Funckia na vytvorenie uzivatela a pridania ho do databazi

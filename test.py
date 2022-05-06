@@ -110,25 +110,18 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 200)
         self.assertEqual(response.content_type, "application/json")
 
-
-
-    def test100(self):
+    def test0021(self):
         login = login_user(self, "+421 900 000000", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
-        response = tester.delete("/api/v1/user/1", headers={'Authorization': 'Bearer ' + token})
+        response = tester.post("/api/v1/service-create", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            title='Testing',
+            user_id=1,
+            estimate=5
+        ))
         statuscode = response.status_code
-        self.assertEqual(statuscode, 204)
-        self.assertEqual(response.content_type, "text/html; charset=utf-8")
-
-    def test101(self):
-        login = login_user(self, "+421 900 000001", "test2")
-        tester = app.test_client(self)
-        token = login.json['access_token']
-        response = tester.delete("/api/v1/user/2", headers={'Authorization': 'Bearer ' + token})
-        statuscode = response.status_code
-        self.assertEqual(statuscode, 204)
-        self.assertEqual(response.content_type, "text/html; charset=utf-8")
+        self.assertEqual(statuscode, 200)
+        self.assertEqual(response.content_type, "application/json")
     #
     # def test_user_login_with_correct_data(self):
     #     response = login_user(self, "+421 999 999999", "testing")
@@ -227,6 +220,32 @@ class Test(unittest.TestCase):
 #             assert type(res[0]['rating']) is int
 #         print("test_get_all_serviceregister finished successfully")
 
+    def test0901(self):
+        login = login_user(self, "+421 900 000000", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.delete("/api/v1/service/1", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1001(self):
+        login = login_user(self, "+421 900 000000", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.delete("/api/v1/user/2", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1002(self):
+        login = login_user(self, "+421 900 000000", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.delete("/api/v1/user/1", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
 
 if __name__ == "__main__":
     unittest.main()
