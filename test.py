@@ -280,6 +280,12 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
         self.assertEqual(response.content_type, "application/json")
+        res = json.loads(response.data.decode('utf8'))
+        assert res[0]['id'] == 1
+        assert res[0]['hours'] is None
+        assert res[0]['service_status'] == 'inprogress'
+        assert res[0]['end_time'] is None
+        assert res[0]['rating'] is None
 
     def test0411(self):  # Test na overenie informacii zo serviceregister
         tester = app.test_client(self)
@@ -302,11 +308,6 @@ class Test(unittest.TestCase):
         assert 'rating' in res[0]
         if res[0]['rating'] is not None:
             assert type(res[0]['rating']) is int
-        assert res[0]['id'] == 1
-        assert res[0]['hours'] is None
-        assert res[0]['service_status'] == 'inprogress'
-        assert res[0]['end_time'] is None
-        assert res[0]['rating'] is None
 
     def test0421(self):  # Test na vytvorenie serviceregister s user 1 na service 1
         login = login_user(self, "+421 900 000001", "test1")
@@ -373,6 +374,13 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 204)
         self.assertEqual(response.content_type, "application/json")
 
+    def test0702(self):  # Test na kontrolu vymazania serviceregister
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/serviceregister/1")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+        self.assertEqual(response.content_type, "application/json")
+
     def test0801(self):  # Test na upravu service
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
@@ -398,7 +406,7 @@ class Test(unittest.TestCase):
         assert res[0]['estimate'] == 5
         assert res[0]['avg_rating'] == 3
 
-    def test0901(self):
+    def test0901(self):  # Vymazanie service 1
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -406,6 +414,14 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 204)
         self.assertEqual(response.content_type, "application/json")
+
+    def test0902(self):  # Kontrola vymazania
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/service/1")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+        self.assertEqual(response.content_type, "application/json")
+
 
     def test1401(self):
         login = login_user(self, "+421 900 000001", "test1")

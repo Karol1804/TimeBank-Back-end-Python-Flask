@@ -46,7 +46,7 @@ def api_single_service_get(services_id):
 
     if not obj:
         app.logger.warning(f"{request.remote_addr}, Selected service: {services_id} doesn't exist.")
-        return {'Bad Request': f'Service {services_id} not found'}, 400
+        return {'Bad Request': f'Service {services_id} not found'}, 404
 
     response_obj = [dict(
         id=obj.id,

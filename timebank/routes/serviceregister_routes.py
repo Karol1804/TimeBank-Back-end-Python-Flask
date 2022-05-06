@@ -56,7 +56,7 @@ def api_single_registerservice_get(serviceregister_id):
 
     if not obj:
         app.logger.warning(f"{request.remote_addr}, Selected serviceregister: {serviceregister_id} doesn't exist.")
-        return '', 404
+        return jsonify({'Message': 'Service has not been successfully found'}), 404
 
     response_obj = [dict(
         id=obj.id,
@@ -155,7 +155,7 @@ def api_single_registerservice_delete(serviceregister_id):
 
     if not db_test:
         app.logger.warning(f"{request.remote_addr}, Selected serviceregister: {serviceregister_id} does not exist.")
-        return {'Bad Request': f'Service {serviceregister_id} not found'}, 400
+        return jsonify({'Message': 'Serviceregister has not found'}), 400
 
     try:
         db_obj.delete()
