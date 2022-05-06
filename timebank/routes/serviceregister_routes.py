@@ -289,4 +289,4 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
         return jsonify({'error': str(e.orig)}), 405
     app.logger.info(f"{request.remote_addr}, Finishing serviceregister: {serviceregister_id} has been completed "
                     f"successfully by requestor: {get_jwt_identity()}.")
-    return '', 200
+    return jsonify({'Message': 'Serviceregister successfully finished'}), 200
