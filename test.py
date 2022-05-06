@@ -422,8 +422,99 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 404)
         self.assertEqual(response.content_type, "application/json")
 
+    def test0903(self):  # Vymazanie service 2
+        login = login_user(self, "+421 900 000002", "test2")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.delete("/api/v1/service/2", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
 
-    def test1401(self):
+    def test0904(self):  # Kontrola vymazania
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/service/2")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1001(self):  # User profile
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.get("/api/v1/user/profile", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 200)
+        self.assertEqual(response.content_type, "application/json")
+        res = json.loads(response.data.decode('utf-8'))
+        assert res[0]['id'] == 1
+        assert res[0]['phone'] == "+421 900 000001"
+        assert res[0]['user_name'] == "Testinguser1"
+        assert res[0]['time_account'] == 5
+
+    def test1101(self):  # Change password
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/user/3/set-password", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            password='testing',
+            password_val='testing'
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1201(self):  # Logout
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.post("/api/v1/user/logout", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 201)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1301(self):  # Edit User:
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/user/3", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            phone="+421 900 999999",
+            user_name='Antonio'
+
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1302(self):  # Kontrola editu usera
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/user/3")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 200)
+        self.assertEqual(response.content_type, "application/json")
+        res = json.loads(response.data.decode('utf-8'))
+        assert res[0]['id'] == 3
+        assert res[0]['phone'] == "+421 900 999999"
+        assert res[0]['user_name'] == "Antonio"
+        assert res[0]['time_account'] == 0
+
+    def test1401(self):  # Vymazanie usera 3
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.delete("/api/v1/user/3", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1402(self):  # Kontrola vymazania usera 3
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/user/3")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1403(self):
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -432,13 +523,27 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 204)
         self.assertEqual(response.content_type, "application/json")
 
-    def test1402(self):
+    def test1404(self):  # Kontrola vymazania usera 2
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/user/2")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1405(self):
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
         response = tester.delete("/api/v1/user/1", headers={'Authorization': 'Bearer ' + token})
         statuscode = response.status_code
         self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1406(self):  # Kontrola vymazania usera 3
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/user/1")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
         self.assertEqual(response.content_type, "application/json")
 
 

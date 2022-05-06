@@ -50,7 +50,7 @@ def api_single_user_get(user_id):
 
     if not obj:
         app.logger.warning(f"{request.remote_addr}, Selected user: {user_id} doesn't exist.")
-        return '{"Message": "No user to be found."}', 404
+        return jsonify({"Message": "No user to be found."}), 404
 
     response_obj = [dict(
         id=obj.id,
@@ -121,7 +121,7 @@ def api_single_user_put(user_id):
                     f"  Phone has been changed from {old_obj[0]} to {db_obj.phone},\n"
                     f"  Username has been changed from \"{old_obj[1]}\" to \"{db_obj.user_name}\",\n"
                     f"  Time account has been changed from {old_obj[2]} to {db_obj.time_account}.")
-    return '{"Message": "user successfully updated."}', 204
+    return jsonify({"Message": "user successfully updated."}), 204
 
 
 # Funkcia na zmazanie pouzivatela z databazi
@@ -235,7 +235,7 @@ def api_single_user_set_password(user_id):
                          f"Recheck your request and try again.")
         return jsonify({'error': str(e.orig)}), 405
     app.logger.info(f"{request.remote_addr}, Selected user: {user_id} password has been changed.")
-    return '{"Message": "User password succesfully changed."}', 204
+    return jsonify({"Message": "User password succesfully changed."}), 204
 
 
 # Funkcia na prihlasenie uzivatela
