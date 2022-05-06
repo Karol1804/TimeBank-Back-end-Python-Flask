@@ -389,13 +389,10 @@ def refresh():
     app.logger.info(f"Token has been successfully refreshed for selected user: {get_jwt_identity()}")
     return resp, 200
 
+
 # Funkcia na kontrolu ci je telefonne cislo v databaze
 @app.route('/api/v1/user/phone', methods=['POST'])
-@jwt_required(optional=True)
 def get_number():
-    if get_jwt_identity() is None:
-        return '', 401
-
     db_obj = db.session.query(User)
 
     req_data = None
@@ -404,10 +401,10 @@ def get_number():
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
 
-    cislo = req_data['phone']
+    number = req_data['phone']
 
     for num in db_obj:
-        if num.phone == cislo:
+        if num.phone == number:
             return jsonify(num.phone), 200
 
-    return jsonify("Number not found"), 404
+    return jsonify({'error': 'Number not found'}), 404
