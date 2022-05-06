@@ -223,7 +223,7 @@ def api_single_serviceregister_create():
     return api_single_registerservice_get(db_obj.id)
 
 
-@app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/', methods=['PUT'])
+@app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>', methods=['PUT'])
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
 @jwt_required(optional=True)
 def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
