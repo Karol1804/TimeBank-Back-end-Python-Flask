@@ -24,29 +24,69 @@ def register_user(self, phone, password, password_val, user_name):
 
 
 class Test(unittest.TestCase):
-    def test001(self):
-        response = register_user(self, "+421 900 000000", "test1", "test1", "Testinguser1")
+    def test0001(self):
+        response = register_user(self, "+421 900 000000", "test1", "test1", "Testinguser1")  # Vytvor user 1 so spravnymi udajmi
         self.assertEqual(response.content_type, "application/json")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
-    def test002(self):
-        response = register_user(self, "+421 900 000001", "test2", "test2", "Testinguser2")
+    def test0002(self):
+        response = register_user(self, "+421 900 000001", "test2", "test2", "Testinguser2")  # Vytvor user 2 so spravnymi udajmi
         self.assertEqual(response.content_type, "application/json")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
-    def test003(self):
+    def test0003(self):
+        response = register_user(self, "+421 900 000001", "test2", "test2", "Testinguser3")  # Test o vytvorenie usera s rovnakym telefonnym cislom
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 405)
+
+    def test0004(self):
+        response = register_user(self, "+421900000001", "test2", "test2", "Testinguser3")  # Test o vytvorenie usera s nespravnym formatom telefonneho cisla
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+
+    def test0005(self):
+        response = register_user(self, "+421 900 000002", "test2", "test1", "Testinguser3")  # Test o vytvorenie usera s roznymi heslami
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+
+    def test0011(self):
+        response = login_user(self, "+421 900 000000", "test1")  # Test prihlasenie user 1
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 201)
+
+    def test0012(self):
+        response = login_user(self, "+421 900 000001", "test2")  # Test prihlasenie user 2
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 201)
+
+    def test0013(self):
+        response = login_user(self, "+421 900 000000", "test2")  # Test prihlasenie user 1 s nespravnym heslom
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 401)
+
+    def test0014(self):
+        response = login_user(self, "+421 900 000002", "test1")  # Test prihlasenie s neexistujucim telefonnym cislom
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+
+    def test0015(self):  # Test na overenie informacii s get all users
         tester = app.test_client(self)
         response = tester.get("/api/v1/users")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
         self.assertEqual(response.content_type, "application/json")
-
-    def test004(self):
-        response = app.test_client().get('/api/v1/users')
         res = json.loads(response.data.decode('utf-8'))
         assert type(res[0]) is dict
+        assert type(res[1]) is dict
         assert 'id' in res[0]
         assert type(res[0]['id']) is int
         assert 'phone' in res[0]
@@ -56,12 +96,21 @@ class Test(unittest.TestCase):
         assert 'time_account' in res[0]
         assert type(res[0]['time_account']) is int
 
-    def test005(self):
+    def test0016(self):  # Overenie existencie user 1
         tester = app.test_client(self)
         response = tester.get("/api/v1/user/1")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
         self.assertEqual(response.content_type, "application/json")
+
+    def test0017(self):  # Overenie existencie user 2
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/user/2")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 200)
+        self.assertEqual(response.content_type, "application/json")
+
+
 
     def test100(self):
         login = login_user(self, "+421 900 000000", "test1")

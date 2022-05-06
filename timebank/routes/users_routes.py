@@ -176,7 +176,7 @@ def api_single_user_create():
         db_obj.password = generate_password_hash(req_data['password'])
     else:
         app.logger.warning(f"{request.remote_addr}, Passwords are not equal while creating user, try again.")
-        return '{"Message": "Passwords are not equal."}', 400
+        return jsonify({'error': 'Passwords are not equal'}), 400
     # Z tela poziadavky vytiahneme meno a vlozime ho do databazy
     db_obj.user_name = req_data['user_name']
     db_obj.time_account = 0
@@ -253,11 +253,11 @@ def api_single_user_login():
         db_obj = db_query.filter_by(phone=phone).one()
     except NoResultFound:
         app.logger.warning(f"{request.remote_addr}, Phone number has been not found in database, cannot login")
-        return '{"Message": "Phone number doesnt exist."}', 404
+        return jsonify({'Message': 'Number doesn\'t exist'}), 404
 
     if not check_password_hash(db_obj.password, password):
         app.logger.warning(f"{request.remote_addr}, Password is not correct, cannot login")
-        return '{"Message": "Password not correct."}', 401
+        return jsonify({'Message': 'Password not correct'}), 401
 
     identity = phone
     access_token = create_access_token(identity=identity)
