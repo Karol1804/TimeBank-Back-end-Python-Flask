@@ -121,7 +121,7 @@ def api_single_service_put(services_id):
                     f"  Title has been changed from \"{old_obj[0]}\" to \"{db_obj.title}\",\n"
                     f"  User ID has been changed from {old_obj[1]} to {db_obj.user_id},\n"
                     f"  Estimate has been changed from {old_obj[2]} to {db_obj.estimate}.")
-    return '', 204
+    return jsonify({'Message': 'Service successfully edited'}), 204
 
 
 @app.route('/api/v1/service/<services_id>', methods=['DELETE'])

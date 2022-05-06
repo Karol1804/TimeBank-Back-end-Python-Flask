@@ -364,7 +364,7 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 204)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0701(self):
+    def test0701(self):  # Test na vymazanie serviceregister
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -372,6 +372,31 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 204)
         self.assertEqual(response.content_type, "application/json")
+
+    def test0801(self):  # Test na upravu service
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/service/1", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            title='Testing_edit',
+            user_id=3,
+            estimate=5
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 204)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0802(self):  # Test na kontrolu udajov po edite
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/service/1")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 200)
+        self.assertEqual(response.content_type, "application/json")
+        res = json.loads(response.data.decode('utf-8'))
+        assert res[0]['id'] == 1
+        assert res[0]['title'] == 'Testing_edit'
+        assert res[0]['estimate'] == 5
+        assert res[0]['avg_rating'] == 3
 
     def test0901(self):
         login = login_user(self, "+421 900 000001", "test1")
