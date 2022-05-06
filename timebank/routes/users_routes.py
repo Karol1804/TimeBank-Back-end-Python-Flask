@@ -247,7 +247,7 @@ def api_single_user_login():
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
     # Podmienka ktora kontroluje ci mame v tele poziadavky telefonne cislo a heslo
-    if not req_data['phone'] and not req_data['password']:
+    if 'phone' not in req_data or 'password'not in req_data:
         app.logger.warning(f"{request.remote_addr}, Login failed, check your request and try again")
         return '{"Message": "Phone number and password not defined"}', 400
     phone = req_data['phone']
