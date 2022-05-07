@@ -405,6 +405,6 @@ def get_number():
 
     for num in db_obj:
         if num.phone == number:
-            return jsonify(num.phone), 200
+            return jsonify(result=True), 200
 
-    return jsonify({'error': 'Number not found'}), 404
+    return jsonify(result=False), 404
