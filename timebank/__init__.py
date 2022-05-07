@@ -5,6 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, set_access_cookies, get_jwt
 from flask_sqlalchemy import SQLAlchemy
+from logging.handlers import TimedRotatingFileHandler
 
 app = Flask(__name__)
 if app.config["ENV"] == "production":
@@ -39,7 +40,7 @@ def before_first_request():
         os.mkdir(datetime.now().strftime('%m'))
     os.chdir(month_dir)
 
-    log = datetime.now().strftime('timebank_%Y_%m_%d_%H_%M_%S.log')
+    log = datetime.now().strftime('%Y-%m-%d - %H-%M-%S.log')
     log_file = os.path.join(log)
     handler = logging.FileHandler(log_file)
     handler.setLevel(log_level)
