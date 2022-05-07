@@ -5,7 +5,6 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, set_access_cookies, get_jwt
 from flask_sqlalchemy import SQLAlchemy
-from logging.handlers import TimedRotatingFileHandler
 
 app = Flask(__name__)
 if app.config["ENV"] == "production":
