@@ -26,11 +26,21 @@ def before_first_request():
     for handler in app.logger.handlers:
         app.logger.removeHandler(handler)
 
-    root = os.path.dirname(os.path.abspath(__file__))
-    logdir = os.path.join(root, 'logs')
+    logdir = os.path.join('logs')
     if not os.path.exists(logdir):
         os.mkdir(logdir)
-    log_file = os.path.join(logdir, 'app.log')
+    os.chdir(logdir)
+    year_dir = os.path.join(datetime.now().strftime('%Y'))
+    if not os.path.exists(datetime.now().strftime('%Y')):
+        os.mkdir(datetime.now().strftime('%Y'))
+    os.chdir(year_dir)
+    month_dir = os.path.join(datetime.now().strftime('%m'))
+    if not os.path.exists(datetime.now().strftime('%m')):
+        os.mkdir(datetime.now().strftime('%m'))
+    os.chdir(month_dir)
+
+    log = datetime.now().strftime('timebank_%Y_%m_%d_%H_%M_%S.log')
+    log_file = os.path.join(log)
     handler = logging.FileHandler(log_file)
     handler.setLevel(log_level)
     app.logger.addHandler(handler)
