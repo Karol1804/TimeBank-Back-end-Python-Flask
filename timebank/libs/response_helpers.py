@@ -109,3 +109,10 @@ def is_date(field, date_format='%Y-%m-%d'):
 def phone_number_match(number):
     if not re.match(r"\A[+]\d{3} \d{3} \d{6}\Z", number):
         raise ValidationError(number, f"Incorrect number format")
+
+
+def is_hours(field):
+    if int(field) > 0:
+        return field
+    else:
+        raise ValidationError(field, f"Hours are not valid.")

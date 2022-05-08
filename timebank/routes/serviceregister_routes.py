@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from timebank.models.serviceregister_model import Serviceregister
 from timebank import app, db
 from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
-    user_exists, service_exists, is_rating
+    user_exists, service_exists, is_rating, is_hours, is_date
 from timebank.models.services_model import Service
 from timebank.models.users_model import User
 
@@ -95,7 +95,7 @@ def api_single_serviceregister_put(serviceregister_id):
     if not db_obj:
         app.logger.warning(f"{request.remote_addr}, Selected serviceregister: "
                            f"{serviceregister_id} does not exist.")
-        return '', 404
+        return jsonify({'Message': 'Service has not been successfully found'}), 404
     old_obj = [db_obj.service_id, db_obj.consumer_id, db_obj.hours,
                db_obj.service_status.name, db_obj.end_time, db_obj.rating]
     req_data = None
@@ -104,27 +104,34 @@ def api_single_serviceregister_put(serviceregister_id):
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
 
-    if 'service_id' in req_data:
+    if 'hours' in req_data and db_obj.hours is not None:
         try:
-            is_number(req_data['service_id'])
-            service_exists(req_data['service_id'])
+            is_number(req_data['hours'])
+            is_hours(req_data['hours'])
         except ValidationError as e:
             app.logger.error(f"{request.remote_addr}, Validation error: "
-                             f"Updating serviceregister failed, service id is not a number.")
+                             f"Updating serviceregister failed, hours is not a number.")
             return jsonify({'error': str(e)}), 400
+        db_obj.hours = int(req_data['hours'])
 
-        db_obj.service_id = int(req_data['service_id'])
-
-    if 'customer_id' in req_data:
+    if 'end_time' in req_data and db_obj.end_time is not None:
         try:
-            is_number(req_data['customer_id'])
-            user_exists(req_data['customer_id'])
+            is_date(req_data['end_time'])
         except ValidationError as e:
             app.logger.error(f"{request.remote_addr}, Validation error: "
-                             f"Updating serviceregister failed, customer id is not a number.")
+                             f"Updating serviceregister failed, time format not valid.")
             return jsonify({'error': str(e)}), 400
+        db_obj.end_time = req_data['end_time']
 
-        db_obj.service_id = int(req_data['customer_id'])
+    if 'rating' in req_data and db_obj.rating is not None:
+        try:
+            is_number(req_data['rating'])
+            is_hours(req_data['rating'])
+        except ValidationError as e:
+            app.logger.error(f"{request.remote_addr}, Validation error: "
+                             f"Updating serviceregister failed, rating is not valid.")
+            return jsonify({'error': str(e)}), 400
+        db_obj.rating = int(req_data['rating'])
 
     try:
         db.session.commit()
@@ -141,7 +148,7 @@ def api_single_serviceregister_put(serviceregister_id):
                     f"  Service status has been changed from \"{old_obj[3]}\" to \"{db_obj.service_status.name}\",\n"
                     f"  End time has been changed from {old_obj[4]} to {db_obj.end_time},\n"
                     f"  Rating has been changed from {old_obj[5]} to {db_obj.rating}.")
-    return jsonify({'Message': 'Serviceregister has been successfully edited'}), 204
+    return api_single_registerservice_get(serviceregister_id)
 
 
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['DELETE'])
@@ -155,7 +162,7 @@ def api_single_registerservice_delete(serviceregister_id):
 
     if not db_test:
         app.logger.warning(f"{request.remote_addr}, Selected serviceregister: {serviceregister_id} does not exist.")
-        return jsonify({'Message': 'Serviceregister has not found'}), 400
+        return jsonify({'Message': 'Serviceregister has not found'}), 404
 
     try:
         db_obj.delete()
@@ -237,6 +244,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
         return jsonify({'error': str(e)}), 400
     try:
         is_number(hours)
+        is_hours(hours)
     except ValidationError as e:
         app.logger.warning(f"{request.remote_addr}, Finishing of serviceregister failed, "
                            f"check hours number and try again.")
