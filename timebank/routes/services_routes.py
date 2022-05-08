@@ -5,8 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from timebank.models.services_model import Service
 from timebank.models.users_model import User
 from timebank import app, db
-from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
-    user_exists, is_estimate
+from timebank.libs.response_helpers import record_sort_params_handler,\
+    get_all_db_objects, is_number, ValidationError, is_estimate
 
 
 @app.route('/api/v1/services', methods=['GET'])
@@ -70,7 +70,8 @@ def api_single_service_get(services_id):
 @jwt_required(optional=True)
 def api_single_service_put(services_id):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
 
     db_query = db.session.query(Service)
     db_obj = db_query.get(services_id)
@@ -85,18 +86,10 @@ def api_single_service_put(services_id):
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
 
-    if 'user_id' in req_data:
-        try:
-            is_number(req_data['user_id'])
-            user_exists(req_data['user_id'])
-        except ValidationError as e:
-            app.logger.error(f"{request.remote_addr}, Validation error: "
-                             f"Updating services failed, user id is not a number.")
-            return jsonify({'error': str(e)}), 400
-
-        db_obj.user_id = int(req_data['user_id'])
-
     if 'title' in req_data:
+        if len(req_data['title']) > 1000:
+            app.logger.warning(f"{request.remote_addr}, Title too long.")
+            return jsonify({'error': 'Title too long.'}), 400
         db_obj.title = req_data['title']
 
     if 'estimate' in req_data:
@@ -128,7 +121,8 @@ def api_single_service_put(services_id):
 @jwt_required(optional=True)
 def api_single_service_delete(services_id):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     db_query = db.session.query(Service)
     db_test = db_query.get(services_id)
     db_obj = db_query.filter_by(id=services_id)
@@ -155,7 +149,8 @@ def api_single_service_delete(services_id):
 @jwt_required(optional=True)
 def api_single_service_create():
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     db_obj = Service()
 
     req_data = None

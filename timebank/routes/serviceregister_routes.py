@@ -5,8 +5,8 @@ from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from timebank.models.serviceregister_model import Serviceregister
 from timebank import app, db
-from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects, is_number, ValidationError, \
-    user_exists, service_exists, is_rating, is_hours, is_date
+from timebank.libs.response_helpers import record_sort_params_handler, get_all_db_objects,\
+    is_number, ValidationError, service_exists, is_rating, is_hours, is_date
 from timebank.models.services_model import Service
 from timebank.models.users_model import User
 
@@ -88,7 +88,8 @@ def api_single_registerservice_get(serviceregister_id):
 @jwt_required(optional=True)
 def api_single_serviceregister_put(serviceregister_id):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     db_query = db.session.query(Serviceregister)
     db_obj = db_query.get(serviceregister_id)
 
@@ -155,7 +156,8 @@ def api_single_serviceregister_put(serviceregister_id):
 @jwt_required(optional=True)
 def api_single_registerservice_delete(serviceregister_id):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     db_query = db.session.query(Serviceregister)
     db_test = db_query.get(serviceregister_id)
     db_obj = db_query.filter_by(id=serviceregister_id)
@@ -182,7 +184,8 @@ def api_single_registerservice_delete(serviceregister_id):
 @jwt_required(optional=True)
 def api_single_serviceregister_create():
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     db_obj = Serviceregister()
 
     req_data = None
@@ -235,7 +238,8 @@ def api_single_serviceregister_create():
 @jwt_required(optional=True)
 def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     try:
         is_number(serviceregister_id)
     except ValidationError as e:

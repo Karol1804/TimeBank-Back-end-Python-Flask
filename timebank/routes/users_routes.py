@@ -69,7 +69,8 @@ def api_single_user_get(user_id):
 @jwt_required(optional=True)
 def api_single_user_put(user_id):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     db_query = db.session.query(User)
     db_obj = db_query.get(user_id)
     if not db_obj:
@@ -129,7 +130,8 @@ def api_single_user_put(user_id):
 @jwt_required(optional=True)
 def api_single_user_delete(user_id):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     db_query = db.session.query(User)
     db_test = db_query.get(user_id)
     db_obj = db_query.filter_by(id=user_id)
@@ -214,7 +216,7 @@ def api_single_user_set_password(user_id):
     db_obj = db_query.get(user_id)
     if not db_obj:
         app.logger.warning(f"{request.remote_addr}, Selected user: {user_id} does not exist.")
-        return '{"Message": "No user to be found."}', 404
+        return jsonify({"Message": "No user to be found."}) , 404
 
     req_data = None
     if request.content_type == 'application/json':
@@ -222,11 +224,16 @@ def api_single_user_set_password(user_id):
     elif request.content_type == 'application/x-www-form-urlencoded':
         req_data = request.form
 
+    if 'password' not in req_data or 'password_val' not in req_data:
+        app.logger.warning(f"{request.remote_addr}, Passwords are missing while setting password.")
+        return jsonify({'error': 'Missing passwords'}), 400
+
     if req_data['password'] == req_data['password_val']:
         db_obj.password = generate_password_hash(req_data['password'])
     else:
         app.logger.warning(f"{request.remote_addr}, Passwords are not equal while setting password, try again.")
-        return '{"Message": "Passwords are not equal."}', 400
+        return jsonify({"Message": "Passwords are not equal."}), 400
+
     try:
         db.session.commit()
     except IntegrityError as e:
@@ -283,7 +290,8 @@ def api_single_user_login():
 @jwt_required(optional=True)
 def api_single_user_logout():
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     # get_jwt_identity je funckia ktora zo zadaneho tokenu vytiahne identitu
     identity = get_jwt_identity()
     db_query = db.session.query(User)
@@ -291,7 +299,7 @@ def api_single_user_logout():
         db_obj = db_query.filter_by(phone=identity).one()
     except NoResultFound:
         app.logger.error(f"{request.remote_addr}, User with this token does not exist, log out failed.")
-        return '{"Message": "No result found."}', 400
+        return '{"Message": "No result found."}', 401
 
     response = jsonify({'logout': True, "msg": "see ya again"})
     unset_jwt_cookies(response)
@@ -304,7 +312,8 @@ def api_single_user_logout():
 @jwt_required(optional=True)
 def api_single_user_profile():
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     phone = get_jwt_identity()
     db_query = db.session.query(User)
     try:
@@ -352,7 +361,8 @@ def api_single_user_profile():
 @jwt_required(optional=True)
 def api_single_user_services():
     if get_jwt_identity() is None:
-        return '', 405
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
 
     phone = get_jwt_identity()
     user_query = db.session.query(User)
