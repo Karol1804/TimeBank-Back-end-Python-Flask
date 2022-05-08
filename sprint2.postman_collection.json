@@ -133,6 +133,15 @@
 						"url": "http://157.245.27.101:5000/api/v1/user/services"
 					},
 					"response": []
+				},
+				{
+					"name": "User History Log",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://157.245.27.101:5000/api/v1/user/history-log"
+					},
+					"response": []
 				}
 			]
 		},
@@ -379,7 +388,7 @@
 	"auth": {
 		"type": "bearer",
 		"bearer": {
-			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MTgzODM4NCwianRpIjoiNTM0OWY1ZmYtODc5OS00YzZmLWJlZmQtOTgzYjY0ZGFmYTNmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MTgzODM4NCwiZXhwIjoxNjUxODQxOTg0fQ.dqeFORwMeLEKvt4dJVnqRNTaglPOUwJEpoLHWf4ZvX4"
+			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MjAyNjE5MSwianRpIjoiMDkxNTFlYTctMzBmNS00Y2UzLTk0NGUtMWMyNzZjMmE3NWZhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MjAyNjE5MSwiZXhwIjoxNjUyMDI5NzkxfQ.h_w9GSARueAI6llH0HcqrBSaSefYI9V0lcJ7ASeDFFA"
 		}
 	},
 	"event": [

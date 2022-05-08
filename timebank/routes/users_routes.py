@@ -384,6 +384,33 @@ def api_single_user_services():
     return response, 200
 
 
+@app.route('/api/v1/user/history-log', methods=['GET'])
+@jwt_required(optional=True)
+def api_single_user_history():
+    if get_jwt_identity() is None:
+        return '', 405
+
+    phone = get_jwt_identity()
+    user_query = db.session.query(User)
+    user_obj = user_query.filter_by(phone=phone).one()
+
+    reg_query = db.session.query(Serviceregister).join(Service)
+    reg_obj = reg_query.filter(Service.user_id == user_obj.id,
+                                  Serviceregister.service_status == 'ended')
+
+    history = []
+    for r in reg_obj:
+        history.append(dict(
+            title=r.Service.title,
+            hours=r.hours,
+            end_time=r.end_time,
+            rating=r.rating,
+        ))
+
+    response = jsonify(history)
+    return response, 200
+
+
 # Funckia na refresnutie tokenu
 @app.route('/token/refresh', methods=['POST'])
 @jwt_required(refresh=True)
