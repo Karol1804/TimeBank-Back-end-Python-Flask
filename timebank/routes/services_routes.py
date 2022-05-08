@@ -167,6 +167,10 @@ def api_single_service_create():
     db_query2 = db.session.query(User)
     obj2 = db_query2.filter_by(phone=get_jwt_identity()).one()
 
+    if 'title' not in req_data:
+        app.logger.warning(f"{request.remote_addr}, Title is missing. Check your request and try again.")
+        return jsonify({'error': 'Title is missing.'}), 400
+
     try:
         is_number(req_data['user_id'])
         user_exists(req_data['user_id'])

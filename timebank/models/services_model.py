@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Service(Base):
     __tablename__ = "Service"
     id = Column(Integer(), primary_key=True, autoincrement=True)
-    title = Column(String(200), nullable=False)
+    title = Column(String(1000), nullable=False)
     user_id = Column(Integer(), ForeignKey('User.id'), nullable=False)
     estimate = Column(Integer())
     avg_rating = Column(Integer())
