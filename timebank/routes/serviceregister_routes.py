@@ -246,6 +246,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
         app.logger.warning(f"{request.remote_addr}, Finishing of serviceregister failed, "
                            f"check serviceregister number and try again.")
         return jsonify({'error': str(e)}), 400
+    print(rating)
     try:
         is_number(hours)
         is_hours(hours)
@@ -254,6 +255,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
                            f"check hours number and try again.")
         return jsonify({'error': str(e)}), 400
     if rating:
+        print(rating)
         try:
             is_number(rating)
         except ValidationError as e:
@@ -286,10 +288,11 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
     db_obj.end_time = datetime.datetime.now()
     db_obj.hours = hours
     db_obj.rating = rating
+    print(rating)
     db_obj2.User.time_account += int(hours)
     db_obj2.avg_rating = db.session.query(func.avg(
         Serviceregister.rating)).filter(Serviceregister.service_id == db_obj.service_id,
-                                        Serviceregister.rating is not None)
+                                        Serviceregister.rating is not None).scalar_subquery()
 
     try:
         db.session.commit()
