@@ -233,85 +233,13 @@ def api_single_serviceregister_create():
     return api_single_registerservice_get(db_obj.id)
 
 
-# @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>', methods=['PUT'])
-# @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
-# @jwt_required(optional=True)
-# def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
-#     if get_jwt_identity() is None:
-#         app.logger.warning(f"{request.remote_addr}, User is not logged in.")
-#         return jsonify({'error': 'User is not logged in.'}), 401
-#     try:
-#         is_number(serviceregister_id)
-#     except ValidationError as e:
-#         app.logger.warning(f"{request.remote_addr}, Finishing of serviceregister failed, "
-#                            f"check serviceregister number and try again.")
-#         return jsonify({'error': str(e)}), 400
-#     print(rating)
-#     try:
-#         is_number(hours)
-#         is_hours(hours)
-#     except ValidationError as e:
-#         app.logger.warning(f"{request.remote_addr}, Finishing of serviceregister failed, "
-#                            f"check hours number and try again.")
-#         return jsonify({'error': str(e)}), 400
-#     if rating:
-#         print(rating)
-#         try:
-#             is_number(rating)
-#         except ValidationError as e:
-#             app.logger.warning(f"{request.remote_addr}, Finishing of serviceregister failed, "
-#                                f"check rating number and if it is in range and try again.")
-#             return jsonify({'error': str(e)}), 400
-#         try:
-#             is_rating(rating)
-#         except ValidationError as e:
-#             app.logger.warning(f"{request.remote_addr}, Finishing of serviceregister failed, "
-#                                f"check rating number and if it is in range and try again.")
-#             return jsonify({'error': str(e)}), 400
-#
-#     db_query = db.session.query(Serviceregister)
-#     db_obj = db_query.get(serviceregister_id)
-#
-#     if not db_obj:
-#         app.logger.warning(f"{request.remote_addr}, Serviceregister in finishing does not exist.")
-#         return jsonify({'error': "Serviceregister doesn\'t exist"}), 404
-#
-#     # db_query2 = service related to selected serv.reg.
-#     db_query2 = db.session.query(Service)
-#     db_obj2 = db_query2.get(db_obj.service_id)
-#     if db_obj.service_status.name == "ended":
-#         app.logger.warning(f"{request.remote_addr}, Can not finish serviceregister, "
-#                            f"serviceregister has been already finished.")
-#         return jsonify({'error': "Serviceregister has been already finished"}), 400
-#
-#     db_obj.service_status = "ended"
-#     db_obj.end_time = datetime.datetime.now()
-#     db_obj.hours = hours
-#     db_obj.rating = rating
-#     print(rating)
-#     db_obj2.User.time_account += int(hours)
-#     db_obj2.avg_rating = db.session.query(func.avg(
-#         Serviceregister.rating)).filter(Serviceregister.service_id == db_obj.service_id,
-#                                         Serviceregister.rating is not None).scalar_subquery()
-#
-#     try:
-#         db.session.commit()
-#         db.session.refresh(db_obj)
-#     except IntegrityError as e:
-#         app.logger.error(f"{request.remote_addr}, Integrity error: "
-#                          f"There has been problem with finishing serviceregister in database. "
-#                          f"Recheck your request and try again.")
-#         return jsonify({'error': str(e.orig)}), 405
-#     app.logger.info(f"{request.remote_addr}, Finishing serviceregister: {serviceregister_id} has been completed "
-#                     f"successfully by requestor: {get_jwt_identity()}.")
-#     return jsonify({'Message': 'Serviceregister successfully finished'}), 200
-
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>', methods=['PUT'])
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
 @jwt_required(optional=True)
 def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=None):
     if get_jwt_identity() is None:
-        return '', 401
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User is not logged in.'}), 401
     try:
         is_number(serviceregister_id)
     except ValidationError as e:
@@ -320,6 +248,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
         return jsonify({'error': str(e)}), 400
     try:
         is_number(hours)
+        is_hours(hours)
     except ValidationError as e:
         app.logger.warning(f"{request.remote_addr}, Finishing of serviceregister failed, "
                            f"check hours number and try again.")

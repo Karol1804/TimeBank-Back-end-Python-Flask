@@ -501,14 +501,14 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    # def test0523(self):  # Test na ukoncenie serviceregister s estimate -1
-    #     login = login_user(self, "+421 900 000003", "test3")
-    #     tester = app.test_client(self)
-    #     token = login.json['access_token']
-    #     response = tester.put("/api/v1/serviceregister/2/-1/3", headers={'Authorization': 'Bearer ' + token})
-    #     statuscode = response.status_code
-    #     self.assertEqual(statuscode, 400)
-    #     self.assertEqual(response.content_type, "application/json")
+    def test0523(self):  # Test na ukoncenie serviceregister s estimate -1
+        login = login_user(self, "+421 900 000003", "test3")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/serviceregister/2/-1/3", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
 
     def test0524(self):  # Test na ukoncenie serviceregister s hodinami 'p'
         login = login_user(self, "+421 900 000003", "test3")
@@ -537,12 +537,12 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    # def test0527(self):  # Test na ukoncenie serviceregister s neprihlasenym userom
-    #     tester = app.test_client(self)
-    #     response = tester.put("/api/v1/serviceregister/1/5/3")
-    #     statuscode = response.status_code
-    #     self.assertEqual(statuscode, 401)
-    #     self.assertEqual(response.content_type, "application/json")
+    def test0527(self):  # Test na ukoncenie serviceregister s neprihlasenym userom
+        tester = app.test_client(self)
+        response = tester.put("/api/v1/serviceregister/1/5/3")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 401)
+        self.assertEqual(response.content_type, "application/json")
 
     def test0601(self):  # Test na zmenu udajov v registerservice
         login = login_user(self, "+421 900 000001", "test1")
