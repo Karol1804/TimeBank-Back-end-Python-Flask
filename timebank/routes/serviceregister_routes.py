@@ -289,7 +289,7 @@ def api_single_serviceregister_finish_rating(serviceregister_id, hours, rating=N
     db_obj2.User.time_account += int(hours)
     db_obj2.avg_rating = db.session.query(func.avg(
         Serviceregister.rating)).filter(Serviceregister.service_id == db_obj.service_id,
-                                        Serviceregister.rating is not None).scalar_subquery()
+                                        Serviceregister.rating is not None)
 
     try:
         db.session.commit()
