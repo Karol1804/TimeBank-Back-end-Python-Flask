@@ -38,6 +38,10 @@ def before_first_request():
     if not os.path.exists(datetime.now().strftime('%m')):
         os.mkdir(datetime.now().strftime('%m'))
     os.chdir(month_dir)
+    day_dir = os.path.join(datetime.now().strftime('%d'))
+    if not os.path.exists(datetime.now().strftime('%d')):
+        os.mkdir(datetime.now().strftime('%d'))
+    os.chdir(day_dir)
 
     log = datetime.now().strftime('%Y-%m-%d - %H-%M-%S.log')
     log_file = os.path.join(log)

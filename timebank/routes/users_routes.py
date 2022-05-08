@@ -405,10 +405,8 @@ def get_number():
 
     for num in db_obj:
         if num.phone == number:
-            
-            return jsonify(result=True), 200
-        else:
-            
-            return jsonify(result=False), 200
-            
-    number = None
+            app.logger.warning(f"{request.remote_addr}, Phone is already in the database. Try again")
+            return jsonify({'error': 'Phone already exists.'}), 400
+
+    app.logger.info(f"{request.remote_addr}, Phone does not exist in database.")
+    return jsonify({'OK': 'You can continue.'}), 200
