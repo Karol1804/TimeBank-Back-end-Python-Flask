@@ -171,13 +171,9 @@ def api_single_service_create():
         app.logger.warning(f"{request.remote_addr}, Title is missing. Check your request and try again.")
         return jsonify({'error': 'Title is missing.'}), 400
 
-    try:
-        is_number(req_data['user_id'])
-        user_exists(req_data['user_id'])
-    except ValidationError as e:
-        app.logger.error(f"{request.remote_addr}, Validation error: "
-                         f"Creating service failed, check user_id in your request and try again.")
-        return jsonify({'error': str(e)}), 400
+    if len(req_data['title']) > 1000:
+        app.logger.warning(f"{request.remote_addr}, Title too long.")
+        return jsonify({'error': 'Title too long.'}), 400
 
     if 'estimate' in req_data:
         try:

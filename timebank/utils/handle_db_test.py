@@ -26,7 +26,7 @@ mycursor.execute(sql2)
 
 sql3 = "CREATE TABLE Service" \
        "(id INT PRIMARY KEY AUTO_INCREMENT," \
-       "title VARCHAR(200) NOT NULL," \
+       "title VARCHAR(1000) NOT NULL," \
        "user_id INT NOT NULL," \
        "CONSTRAINT `fk_service_user`FOREIGN KEY (user_id) REFERENCES User (id) ON DELETE CASCADE ON UPDATE RESTRICT," \
        "estimate INT," \
