@@ -135,7 +135,7 @@
 					"response": []
 				},
 				{
-					"name": "User by hours",
+					"name": "User by time_account",
 					"request": {
 						"method": "GET",
 						"header": [],
