@@ -135,6 +135,40 @@
 					"response": []
 				},
 				{
+					"name": "User by time_account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://157.245.27.101:5000/api/v1/users?field=time_account&sort=desc",
+							"protocol": "http",
+							"host": [
+								"157",
+								"245",
+								"27",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "field",
+									"value": "time_account"
+								},
+								{
+									"key": "sort",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "User History Log",
 					"request": {
 						"method": "GET",
@@ -388,7 +422,7 @@
 	"auth": {
 		"type": "bearer",
 		"bearer": {
-			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MjAyNjE5MSwianRpIjoiMDkxNTFlYTctMzBmNS00Y2UzLTk0NGUtMWMyNzZjMmE3NWZhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MjAyNjE5MSwiZXhwIjoxNjUyMDI5NzkxfQ.h_w9GSARueAI6llH0HcqrBSaSefYI9V0lcJ7ASeDFFA"
+			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MjA5NjM2MiwianRpIjoiNWJmMTZkNGMtMzkxOS00YmM4LTk0YzQtODYxY2UyMzRhZTk1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Iis0MjEgOTA1IDExMTIyMiIsIm5iZiI6MTY1MjA5NjM2MiwiZXhwIjoxNjUyMDk5OTYyfQ.2w1nrQLF3m2spjDTSABNZHZacgnM4cLLnvKHU6VtYNo"
 		}
 	},
 	"event": [
