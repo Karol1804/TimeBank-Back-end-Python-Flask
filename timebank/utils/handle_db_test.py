@@ -1,5 +1,7 @@
+# Subor na handlovanie databazy urcenej pre testing
 import mysql.connector
 
+# Adresa databazy a aj prihlasovacie udaje do nej
 mydb = mysql.connector.connect(
        host="157.245.27.101",
        port='33306',
@@ -10,10 +12,12 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
+# Dropnutie tabuliek
 sql1 = "DROP TABLE IF EXISTS Serviceregister, Service, User"
 
 mycursor.execute(sql1)
 
+# Vytvorenie tabulky user
 sql2 = "CREATE TABLE User" \
        "(id INT PRIMARY KEY AUTO_INCREMENT," \
        "phone VARCHAR(30) NOT NULL," \
@@ -24,6 +28,7 @@ sql2 = "CREATE TABLE User" \
 
 mycursor.execute(sql2)
 
+# Vytvorenie tabulky service
 sql3 = "CREATE TABLE Service" \
        "(id INT PRIMARY KEY AUTO_INCREMENT," \
        "title VARCHAR(1000) NOT NULL," \
@@ -34,6 +39,7 @@ sql3 = "CREATE TABLE Service" \
 
 mycursor.execute(sql3)
 
+# Vytvorenie tabulky serviceregister
 sql4 = "CREATE TABLE Serviceregister" \
        "(id INT PRIMARY KEY AUTO_INCREMENT," \
        "service_id INT NOT NULL," \

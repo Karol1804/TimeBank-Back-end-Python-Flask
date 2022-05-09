@@ -4,6 +4,7 @@ import unittest
 import json
 
 
+# Funkcia pre login
 def login_user(self, phone, password):
     tester = app.test_client(self)
     response = tester.post("/api/v1/user/login", json={
@@ -13,6 +14,7 @@ def login_user(self, phone, password):
     return response
 
 
+# Funkcia pre register
 def register_user(self, phone, password, password_val, user_name):
     tester = app.test_client(self)
     response = tester.post("/api/v1/user-create", json={
@@ -24,10 +26,10 @@ def register_user(self, phone, password, password_val, user_name):
     return response
 
 
+# Testy
 class Test(unittest.TestCase):
-    def test0101(self):
-        response = register_user(self, "+421 900 000001", "test1", "test1",
-                                 "Testinguser1")  # Vytvor user 1 so spravnymi udajmi
+    def test0101(self):  # Vytvor user 1 so spravnymi udajmi
+        response = register_user(self, "+421 900 000001", "test1", "test1", "Testinguser1")
         self.assertEqual(response.content_type, "application/json")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
@@ -44,9 +46,8 @@ class Test(unittest.TestCase):
         assert res[0]['user_name'] == "Testinguser1"
         assert res[0]['time_account'] == 0
 
-    def test0103(self):
-        response = register_user(self, "+421 900 000002", "test2", "test2",
-                                 "Testinguser2")  # Vytvor user 2 so spravnymi udajmi
+    def test0103(self):  # Vytvor user 2 so spravnymi udajmi
+        response = register_user(self, "+421 900 000002", "test2", "test2", "Testinguser2")
         self.assertEqual(response.content_type, "application/json")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
@@ -1052,5 +1053,6 @@ class Test(unittest.TestCase):
         self.assertEqual(response.content_type, "application/json")
 
 
+# Spustenie testov
 if __name__ == "__main__":
     unittest.main()

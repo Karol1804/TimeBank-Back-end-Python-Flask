@@ -6,7 +6,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, set_access_cookies, get_jwt
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+app = Flask(__name__)  # Inicializacia Flask aplikacie
 if app.config["ENV"] == "production":
     app.config.from_object("timebank.utils.config.ProductionConfig")
 elif app.config["ENV"] == "testing":
@@ -14,18 +14,22 @@ elif app.config["ENV"] == "testing":
 else:
     app.config.from_object("timebank.utils.config.DevelopmentConfig")
 
+# Nacitanie a nastavenie db, cors a jwt pre aplikaciu
 db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 jwt = JWTManager(app)
 
 
+# Nastavenie loggingu
 @app.before_first_request
 def before_first_request():
-    log_level = logging.DEBUG
+    log_level = logging.DEBUG  # Nastavenie Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 
+    # Vymazanie preddefinovanych handlerov
     for handler in app.logger.handlers:
         app.logger.removeHandler(handler)
 
+    # Nastavenie ukladacieho priecinka (/logs/year/month/day)
     logdir = os.path.join('logs')
     if not os.path.exists(logdir):
         os.mkdir(logdir)
@@ -43,17 +47,20 @@ def before_first_request():
         os.mkdir(datetime.now().strftime('%d'))
     os.chdir(day_dir)
 
+    # Nastavenie nazvu logu a aj handlera prenho
     log = datetime.now().strftime('%Y-%m-%d - %H-%M-%S.log')
     log_file = os.path.join(log)
     handler = logging.FileHandler(log_file)
     handler.setLevel(log_level)
     app.logger.addHandler(handler)
 
+    # Nastavenie levelu, obsahu logu a jeho naformatovanie
     app.logger.setLevel(log_level)
     default_formatter = logging.Formatter("[%(asctime)s] %(levelname)s %(message)s", datefmt='%y %b %d - %H:%M:%S')
     handler.setFormatter(default_formatter)
 
 
+# Nastavenie CORS policy
 @app.after_request
 def add_header(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -62,8 +69,9 @@ def add_header(response):
     response.headers.add('X-Content-Type-Options', 'nosniff')
 
     if response.content_type == '':
-        response.content_type = 'application/json'
+        response.content_type = 'application/json'  # Nastavanie response v json
 
+    # Nastavenie refresh tokenu aby sa access token obnovil po 30 minutach
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)

@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 
+# Vytvorenie zakladnej classy config
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -16,6 +17,7 @@ class Config(object):
     SESSION_COOKIE_SECURE = True
 
 
+# Nastavenie produkcneho configu
 class ProductionConfig(Config):
     # DB_HOST = '127.0.0.1'
     DB_HOST = '157.230.79.85'
@@ -28,6 +30,7 @@ class ProductionConfig(Config):
                               f"{DB_PORT}/{DB_NAME}?charset={DB_CHARSET}"
 
 
+# Nastavenie delelopment configu
 class DevelopmentConfig(Config):
     DEBUG = True
     SESSION_COOKIE_SECURE = False
@@ -45,6 +48,7 @@ class DevelopmentConfig(Config):
                               f"{DB_PORT}/{DB_NAME}?charset={DB_CHARSET}"
 
 
+# Nastavenie testing configu
 class TestingConfig(Config):
     DB_HOST = '157.245.27.101'
     DB_PASSWORD = "ue1roo0uawechai5nieg1B"

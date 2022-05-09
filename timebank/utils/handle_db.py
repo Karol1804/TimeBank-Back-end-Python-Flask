@@ -1,3 +1,4 @@
+# Subor na handlovanie testovacej a produkcnej databazy
 import mysql.connector
 
 mydb = mysql.connector.connect(
