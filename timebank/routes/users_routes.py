@@ -388,7 +388,8 @@ def api_single_user_services():
 @jwt_required(optional=True)
 def api_single_user_history():
     if get_jwt_identity() is None:
-        return '', 405
+        app.logger.warning(f"{request.remote_addr}, User is not logged in.")
+        return jsonify({'error': 'User not logged in'}), 401
 
     phone = get_jwt_identity()
     user_query = db.session.query(User)
@@ -409,6 +410,7 @@ def api_single_user_history():
         ))
 
     response = jsonify(history)
+    app.logger.info(f"{request.remote_addr}, User history log successsfully loaded by requestor: {get_jwt_identity()}")
     return response, 200
 
 
