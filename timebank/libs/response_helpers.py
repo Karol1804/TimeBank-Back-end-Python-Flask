@@ -2,11 +2,10 @@ import datetime
 import re
 from sqlalchemy import inspect, text
 from timebank import db
-from timebank.models.users_model import User
 from timebank.models.services_model import Service
-from timebank.models.models_base import ServiceregisterStatusEnum
 
 
+# Validacia sortovacich parametrov z requestu
 def record_sort_params_handler(args, modeldb):
     valid = True
     if args.get('field'):
@@ -33,11 +32,13 @@ def record_sort_params_handler(args, modeldb):
     return sort_field, sort_dir, valid
 
 
+# Sorovanie DB query
 def get_all_db_objects(sort_field, sort_dir, base_query):
     sort_query = base_query.order_by(text(sort_field + ' ' + sort_dir))
     return sort_query
 
 
+# Reforatovanie datetime objektu na isoformat
 def format_date(date):
     if date is None:
         return date
@@ -45,7 +46,7 @@ def format_date(date):
         date = date.isoformat()
         return date
 
-
+# Custom error na handlovanie validacii
 class ValidationError(Exception):
     def __init__(self, value, message):
         self.value = str(value)
@@ -56,6 +57,7 @@ class ValidationError(Exception):
         return f'{self.value} -> {self.message}'
 
 
+# Validacia datoveho typu
 def is_number(field):
     try:
         int(field)
@@ -63,6 +65,7 @@ def is_number(field):
         raise ValidationError(field, f"Number is not valid.")
 
 
+# Validacia formatu hodnotenia sluzby
 def is_rating(field):
     if -1 < int(field) < 6:
         return field
@@ -70,6 +73,7 @@ def is_rating(field):
         raise ValidationError(field, f"Number is not in 5* rating from 0 to 5.")
 
 
+# Validacia formatu odhadovaneho casu sluzby
 def is_estimate(field):
     if int(field) > 0:
         return field
@@ -77,27 +81,13 @@ def is_estimate(field):
         raise ValidationError(field, f"Estimate must be positive.")
 
 
-def user_exists(field):
-    if not db.session.query(User).get(field):
-        raise ValidationError(field, f"User id does not exist.")
-
-
+# Kontrola existencie sluzby pri vytvarani serviceRegister
 def service_exists(field):
     if not db.session.query(Service).get(field):
         raise ValidationError(field, f"Service id does not exist.")
 
 
-def one_of_enum_status(field):
-    db_objs = ServiceregisterStatusEnum
-    exist = False
-    for db_obj in db_objs:
-        if db_obj.name == field:
-            exist = True
-
-    if not exist:
-        raise ValidationError(field, f"Status is not valid.")
-
-
+# Validacia formatu datumu
 def is_date(field, date_format='%Y-%m-%d'):
     if field:
         try:
@@ -106,11 +96,13 @@ def is_date(field, date_format='%Y-%m-%d'):
             raise ValidationError(field, f"Incorrect data format, should be {date_format}")
 
 
+# Validacia formatu tel. cisla
 def phone_number_match(number):
     if not re.match(r"\A[+]\d{3} \d{3} \d{6}\Z", number):
         raise ValidationError(number, f"Incorrect number format")
 
 
+# Validacia vstupu pri zadavani hodin za sluzbu
 def is_hours(field):
     if int(field) > 0:
         return field
