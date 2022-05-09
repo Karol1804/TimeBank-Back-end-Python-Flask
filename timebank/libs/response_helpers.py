@@ -1,9 +1,7 @@
 import datetime
 import re
-
-from flask import render_template
 from sqlalchemy import inspect, text
-from timebank import db, app
+from timebank import db
 from timebank.models.users_model import User
 from timebank.models.services_model import Service
 from timebank.models.models_base import ServiceregisterStatusEnum
@@ -118,8 +116,3 @@ def is_hours(field):
         return field
     else:
         raise ValidationError(field, f"Hours are not valid.")
-
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
