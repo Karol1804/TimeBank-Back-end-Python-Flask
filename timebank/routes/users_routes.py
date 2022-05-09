@@ -96,6 +96,9 @@ def api_single_user_put(user_id):
             return jsonify({'error': str(e)}), 400
 
     if 'user_name' in req_data:
+        if len(req_data['user_name']) > 30:
+            app.logger.warning(f"{request.remote_addr}, Username too long while editing user.")
+            return jsonify({'error': 'User name too long.'}), 400
         db_obj.user_name = req_data['user_name']
 
     # Podmienka ktora skontroluje ci je v requeste cislo. Pokial nie tak vyhodi error
@@ -168,6 +171,10 @@ def api_single_user_create():
     if 'user_name' not in req_data or 'phone' not in req_data \
             or 'password' not in req_data or 'password_val' not in req_data:
         return jsonify({'error': 'request not valid'}), 400
+
+    if len(req_data['user_name']) > 30:
+        app.logger.warning(f"{request.remote_addr}, Username too long while creting user.")
+        return jsonify({'error': 'Username too long.'}), 400
 
     try:
         phone_number_match(req_data['phone'])

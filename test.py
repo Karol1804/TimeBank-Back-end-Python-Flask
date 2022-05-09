@@ -160,7 +160,19 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 404)
         self.assertEqual(response.content_type, "application/json")
-        res = json.loads(response.data.decode('utf8'))
+
+    def test0128(self):  # Test na vytvorenie pouzivatela s velmi dlhym username
+        tester = app.test_client(self)
+        response = tester.post("/api/v1/user-create", json={
+            'phone': '+421 900 000004',
+            'user_name': 'iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii',
+            'password': 'testing',
+            'password_val': 'testing'
+        })
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
 
     def test0201(self):  # Test prihlasenie user 1
         response = login_user(self, "+421 900 000001", "test1")
@@ -938,18 +950,31 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test1401(self):  # User profile
+    def test1304(self):  # Edit User s telefonnym cislom v nespravnom tvare
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
-        response = tester.get("/api/v1/user/profile", headers={'Authorization': 'Bearer ' + token})
+        response = tester.put("/api/v1/user/3", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            phone="+421 900 999999",
+            user_name='iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'
+
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1401(self):  # User history log
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.get("/api/v1/user/history-log", headers={'Authorization': 'Bearer ' + token})
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
         self.assertEqual(response.content_type, "application/json")
 
-    def test1402(self):  # User profile s neprihlasenym pouzivatelom
+    def test1402(self):  # User history log s neprihlasenym pouzivatelom
         tester = app.test_client(self)
-        response = tester.get("/api/v1/user/profile")
+        response = tester.get("/api/v1/user/history-log")
         statuscode = response.status_code
         self.assertEqual(statuscode, 401)
         self.assertEqual(response.content_type, "application/json")
