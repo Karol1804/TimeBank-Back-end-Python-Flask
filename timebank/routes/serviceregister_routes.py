@@ -11,6 +11,7 @@ from timebank.models.services_model import Service
 from timebank.models.users_model import User
 
 
+# get all rows from serv.reg table / sort by any field / order ascending or descending
 @app.route('/api/v1/serviceregister', methods=['GET'])
 def api_get_all_service_register():
     sort_field, sort_dir, valid = record_sort_params_handler(request.args, Serviceregister)
@@ -49,6 +50,7 @@ def api_get_all_service_register():
         return '', 404
 
 
+# get single row from serv.reg. table based on id
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['GET'])
 def api_single_registerservice_get(serviceregister_id):
     db_query = db.session.query(Serviceregister)
@@ -84,6 +86,7 @@ def api_single_registerservice_get(serviceregister_id):
     return response, 200
 
 
+# update single row from serv.reg. table based on id
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['PUT'])
 @jwt_required(optional=True)
 def api_single_serviceregister_put(serviceregister_id):
@@ -152,6 +155,7 @@ def api_single_serviceregister_put(serviceregister_id):
     return api_single_registerservice_get(serviceregister_id)
 
 
+# delete single row from serv.reg. table based on id
 @app.route('/api/v1/serviceregister/<serviceregister_id>', methods=['DELETE'])
 @jwt_required(optional=True)
 def api_single_registerservice_delete(serviceregister_id):
@@ -180,6 +184,7 @@ def api_single_registerservice_delete(serviceregister_id):
         return jsonify({'Message': 'Serviceregister has been successfully deleted'}), 204
 
 
+# order service
 @app.route('/api/v1/serviceregister-create', methods=['POST'])
 @jwt_required(optional=True)
 def api_single_serviceregister_create():
@@ -205,6 +210,7 @@ def api_single_serviceregister_create():
                          f"Creating serviceregister failed, check service id in your request and try again.")
         return jsonify({'error': str(e)}), 400
     db_obj.service_id = req_data['service_id']
+    # validation: user cannot order a service that he himself is offering
     db_query3 = db.session.query(Service)
     db_obj2 = db_query3.get(db_obj.service_id)
     if db_obj2.user_id == obj2.id:
@@ -233,6 +239,7 @@ def api_single_serviceregister_create():
     return api_single_registerservice_get(db_obj.id)
 
 
+# serv.reg. 'finish' with parameters: id / hours / rating(optional)
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>', methods=['PUT'])
 @app.route('/api/v1/serviceregister/<serviceregister_id>/<hours>/<rating>', methods=['PUT'])
 @jwt_required(optional=True)
