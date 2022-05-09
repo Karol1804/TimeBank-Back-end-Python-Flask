@@ -405,6 +405,7 @@ def api_single_user_history():
             hours=r.hours,
             end_time=r.end_time,
             rating=r.rating,
+            consumer_id=r.consumer_id,
         ))
 
     response = jsonify(history)
