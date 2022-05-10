@@ -9,7 +9,7 @@ class Config(object):
     JWT_ACCESS_COOKIE_PATH = '/auth/'
     JWT_REFRESH_COOKIE_PATH = '/auth/refresh'
     JWT_TOKEN_LOCATION = ["cookies", "headers"]
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
     JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
     JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN-REFRESH"
     CORS_HEADERS = 'Content-Type'
