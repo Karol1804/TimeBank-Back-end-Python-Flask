@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime, timezone, timedelta
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, set_access_cookies, get_jwt
 from flask_sqlalchemy import SQLAlchemy
@@ -83,6 +83,10 @@ def add_header(response):
     except (RuntimeError, KeyError):
         return response
 
+
+@app.errorhandler(404)
+def error404(error):
+    return render_template('404.html'), 404
 
 import timebank.models
 import timebank.routes
