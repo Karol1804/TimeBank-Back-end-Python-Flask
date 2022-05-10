@@ -23,7 +23,7 @@ test-job:
   tags:
     - python
   needs: ['build-job1']
-  allow_failure: false
+  allow_failure: true
   before_script:
     - apk add unzip
     - apk add openssh-client
