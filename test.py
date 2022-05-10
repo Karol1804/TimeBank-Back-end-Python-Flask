@@ -32,7 +32,7 @@ class Test(unittest.TestCase):
         response = register_user(self, "+421 900 000001", "test1", "test1", "Testinguser1")
         self.assertEqual(response.content_type, "application/json")
         statuscode = response.status_code
-        self.assertEqual(statuscode, 201)
+        self.assertEqual(statuscode, 200)
 
     def test0102(self):  # Overenie existencie user 1
         tester = app.test_client(self)
