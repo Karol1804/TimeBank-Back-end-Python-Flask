@@ -39,7 +39,8 @@ test-job:
     - ssh -o StrictHostKeyChecking=no admin@35.170.96.96 "cd /home/admin/timebank_app; rm -r timebank; rm test.zip test.py requirements.txt"
 
   if [ $FAILED ];
-    then exit(1)
+      then quit(1)
+  fi
 
 
 build-job2:
