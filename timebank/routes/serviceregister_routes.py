@@ -130,7 +130,7 @@ def api_single_serviceregister_put(serviceregister_id):
     if 'rating' in req_data and db_obj.rating is not None:
         try:
             is_number(req_data['rating'])
-            is_hours(req_data['rating'])
+            is_rating(req_data['rating'])
         except ValidationError as e:
             app.logger.error(f"{request.remote_addr}, Validation error: "
                              f"Updating serviceregister failed, rating is not valid.")
