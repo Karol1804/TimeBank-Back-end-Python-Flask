@@ -106,7 +106,7 @@ def api_single_service_put(services_id):
 
     # V podmienke validujeme estimate ci je cislo a ci je vacsie ako 0
     if 'estimate' in req_data:
-        if req_data['estimate'] == 'null':
+        if req_data['estimate'] is None:
             db_obj.estimate = None
         else:
             try:
