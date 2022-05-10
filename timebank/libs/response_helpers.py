@@ -75,7 +75,7 @@ def is_rating(field):
 
 # Validacia formatu odhadovaneho casu sluzby
 def is_estimate(field):
-    if int(field) > 0:
+    if 31 > int(field) > 0:
         return field
     else:
         raise ValidationError(field, f"Estimate must be positive.")
@@ -104,7 +104,7 @@ def phone_number_match(number):
 
 # Validacia vstupu pri zadavani hodin za sluzbu
 def is_hours(field):
-    if int(field) > 0:
+    if 31 > int(field) > 0:
         return field
     else:
         raise ValidationError(field, f"Hours are not valid.")
