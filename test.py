@@ -561,7 +561,7 @@ class Test(unittest.TestCase):
 
     def test0528(self):  # Test na ukoncenie serviceregister s neprihlasenym userom
         tester = app.test_client(self)
-        response = tester.put("/api/v1/serviceregister/1/5/3")
+        response = tester.put("/api/v1/serviceregister/2/5/3")
         statuscode = response.status_code
         self.assertEqual(statuscode, 401)
         self.assertEqual(response.content_type, "application/json")

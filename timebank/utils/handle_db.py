@@ -73,35 +73,78 @@ sql9 = "INSERT INTO User (phone, user_name, time_account, password)"\
        "VALUES ('+421 905 999000', 'Ahsoka Tano', '0', 'pbkdf2:sha256:" \
        "260000$AIZ5s2wXaMb1ra8K$89f4fe4c1847290eeb163dec27629da5a1309028f6935abae81b9cfa13a95eb3');"
 
-sql10 = "INSERT INTO Service (title, user_id)" \
-       "VALUES ('Pokosim travnik', '1');"
+sql10 = "INSERT INTO Service (title, user_id, estimate)" \
+       "VALUES ('Pokosim travnik', '1', '2');"
 
-sql11 = "INSERT INTO Service (title, user_id)" \
-       "VALUES ('Vypalim palenku', '2');"
+sql11 = "INSERT INTO Service (title, user_id, estimate, avg_rating)" \
+       "VALUES ('Vypalim palenku', '1', '8', '4');"
 
 sql12 = "INSERT INTO Service (title, user_id)" \
-       "VALUES ('Bonznem roztlieskavacku', '3');"
+       "VALUES ('Pokosim zahradu', '2');"
 
-sql13 = "INSERT INTO Service (title, user_id)" \
-       "VALUES ('Pozehlim pradlo', '4');"
+sql13 = "INSERT INTO Service (title, user_id, estimate)" \
+       "VALUES ('Pozehlim pradlo', '3', '1');"
 
-sql14 = "INSERT INTO Service (title, user_id)" \
-       "VALUES ('Namontujem bojler', '5');"
+sql14 = "INSERT INTO Service (title, user_id, estimate, avg_rating)" \
+       "VALUES ('Vyperiem pradlo', '5', '2', '1');"
+
+sql15 = "INSERT INTO Service (title, user_id)" \
+       "VALUES ('Postriham kriky', '4');"
+
+sql16 = "INSERT INTO Service (title, user_id)" \
+       "VALUES ('Vypijem palenku', '2');"
+
+sql17 = "INSERT INTO Service (title, user_id)" \
+       "VALUES ('Porylujem zahradu', '3');"
+
+sql18 = "INSERT INTO Service (title, user_id, estimate, avg_rating)" \
+       "VALUES ('Vymalujem dom', '4', '8', '3');"
+
+sql19 = "INSERT INTO Service (title, user_id, estimate)" \
+       "VALUES ('Vynesiem smeti', '5', '1');"
+
+sql20 = "INSERT INTO Service (title, user_id, estimate, avg_rating)" \
+       "VALUES ('Vymalujem plot', '1', '4', '4');"
+
+sql21 = "INSERT INTO Service (title, user_id, estimate)" \
+       "VALUES ('Vyvolam hadku', '2', '1');"
+
 #
-sql15 = "INSERT INTO Serviceregister (service_id, consumer_id,service_status)" \
+sql22 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
        "VALUES ('1', '2', 'inprogress');"
 
-sql16 = "INSERT INTO Serviceregister (service_id, consumer_id,service_status)" \
-       "VALUES ('2', '3', 'inprogress');"
+sql23 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status, end_time, rating, hours)" \
+       "VALUES ('11', '3', 'ended', '2020-05-12', '4', '2');"
 
-sql17 = "INSERT INTO Serviceregister (service_id, consumer_id,service_status)" \
-       "VALUES ('3', '4', 'inprogress');"
+sql24 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
+       "VALUES ('3', '2', 'inprogress');"
 
-sql18 = "INSERT INTO Serviceregister (service_id, consumer_id,service_status)" \
-       "VALUES ('4', '5', 'inprogress');"
+sql25 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
+       "VALUES ('4', '1', 'inprogress');"
 
-sql19 = "INSERT INTO Serviceregister (service_id, consumer_id,service_status)" \
-       "VALUES ('5', '1', 'inprogress');"
+sql26 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status, end_time, rating, hours)" \
+       "VALUES ('8', '1', 'ended', '2020-12-15', '3', '1');"
+
+sql27 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
+       "VALUES ('1', '4', 'inprogress');"
+
+sql28 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status, end_time, rating, hours)" \
+       "VALUES ('2', '5', 'ended', '2017-04-08', '4', '5');"
+
+sql29 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
+       "VALUES ('3', '1', 'inprogress');"
+
+sql30 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
+       "VALUES ('4', '3', 'inprogress');"
+
+sql31 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status, end_time, rating, hours)" \
+       "VALUES ('5', '2', 'ended', '2019-02-01', '1', '7');"
+
+sql32 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
+       "VALUES ('4', '3', 'inprogress');"
+
+sql33 = "INSERT INTO Serviceregister (service_id, consumer_id, service_status)" \
+       "VALUES ('5', '2', 'inprogress');"
 
 
 mycursor.execute(sql5)
@@ -119,5 +162,19 @@ mycursor.execute(sql16)
 mycursor.execute(sql17)
 mycursor.execute(sql18)
 mycursor.execute(sql19)
+mycursor.execute(sql20)
+mycursor.execute(sql21)
+mycursor.execute(sql22)
+mycursor.execute(sql23)
+mycursor.execute(sql24)
+mycursor.execute(sql25)
+mycursor.execute(sql26)
+mycursor.execute(sql27)
+mycursor.execute(sql28)
+mycursor.execute(sql29)
+mycursor.execute(sql30)
+mycursor.execute(sql31)
+mycursor.execute(sql32)
+mycursor.execute(sql33)
 
 mydb.commit()
