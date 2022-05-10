@@ -106,16 +106,17 @@ def api_single_service_put(services_id):
 
     # V podmienke validujeme estimate ci je cislo a ci je vacsie ako 0
     if 'estimate' in req_data:
-        try:
-            is_number(req_data['estimate'])
-            is_estimate(req_data['estimate'])
-        except ValidationError as e:
-            app.logger.error(f"{request.remote_addr}, Validation error: "
-                             f"Updating services failed, estimate is not a number or not in range.")
-            return jsonify({'error': str(e)}), 400
-        db_obj.estimate = req_data['estimate']
-    else:
-        db_obj.estimate = None
+        if req_data['estimate'] == 'null':
+            db_obj.estimate = None
+        else:
+            try:
+                is_number(req_data['estimate'])
+                is_estimate(req_data['estimate'])
+            except ValidationError as e:
+                app.logger.error(f"{request.remote_addr}, Validation error: "
+                                 f"Updating services failed, estimate is not a number or not in range.")
+                return jsonify({'error': str(e)}), 400
+            db_obj.estimate = req_data['estimate']
 
     try:
         # Prida zmenu do databazy
