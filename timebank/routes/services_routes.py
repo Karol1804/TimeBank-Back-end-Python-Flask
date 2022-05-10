@@ -345,4 +345,4 @@ def find_service_rating():
     if result:
         return jsonify(result), 200
 
-    return jsonify({"message": f"No services with {search} and higher rating!"}), 400
+    return jsonify({"message": f"No services with {search} and higher rating!"}), 404

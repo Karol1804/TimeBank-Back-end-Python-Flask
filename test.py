@@ -123,7 +123,14 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 400)
 
-    def test0124(self):  # Vytvorenie usera bez user_name
+    def test0124(self):
+        response = register_user(self, "+ppp ppp pppppp", "test2", "test2",
+                                 "Testinguser3")  # Test o vytvorenie usera s nespravnym formatom telefonneho cisla
+        self.assertEqual(response.content_type, "application/json")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+
+    def test0125(self):  # Vytvorenie usera bez user_name
         tester = app.test_client(self)
         response = tester.post("/api/v1/user-create", json={
             'phone': '+421 900 000004',
@@ -134,7 +141,7 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 400)
 
-    def test0125(self):  # Vytvorenie usera bez phone
+    def test0126(self):  # Vytvorenie usera bez phone
         tester = app.test_client(self)
         response = tester.post("/api/v1/user-create", json={
             'password': 'test4',
@@ -145,7 +152,7 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 400)
 
-    def test0126(self):  # Vytvorenie usera bez password
+    def test0127(self):  # Vytvorenie usera bez password
         tester = app.test_client(self)
         response = tester.post("/api/v1/user-create", json={
             'phone': '+421 900 000004',
@@ -155,14 +162,14 @@ class Test(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 400)
 
-    def test0127(self):  # Test na overenie informacii z neexistujuceho usera
+    def test0128(self):  # Test na overenie informacii z neexistujuceho usera
         tester = app.test_client(self)
         response = tester.get("/api/v1/user/4")
         statuscode = response.status_code
         self.assertEqual(statuscode, 404)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0128(self):  # Test na vytvorenie pouzivatela s velmi dlhym username
+    def test0129(self):  # Test na vytvorenie pouzivatela s velmi dlhym username
         tester = app.test_client(self)
         response = tester.post("/api/v1/user-create", json={
             'phone': '+421 900 000004',
@@ -377,6 +384,18 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
+    def test0328(self):  # Test na vytvorenie service s estimate s desatinnou hodnotou
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.post("/api/v1/service-create", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            title='Testing1',
+            estimate=1.1
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
     def test0401(self):  # Test na vytvorenie serviceregister s user 3 na service 1
         login = login_user(self, "+421 900 000003", "test3")
         tester = app.test_client(self)
@@ -563,9 +582,18 @@ class Test(unittest.TestCase):
         response = tester.put("/api/v1/serviceregister/2/p/3", headers={'Authorization': 'Bearer ' + token})
         statuscode = response.status_code
         self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")\
+
+    def test0526(self):  # Test na ukoncenie serviceregister s hours 1.1
+        login = login_user(self, "+421 900 000003", "test3")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/serviceregister/2/1.1/3", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0526(self):  # Test na ukoncenie serviceregister s rating -1
+    def test0531(self):  # Test na ukoncenie serviceregister s rating -1
         login = login_user(self, "+421 900 000003", "test3")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -574,7 +602,7 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0527(self):  # Test na ukoncenie serviceregister s rating 'p'
+    def test0532(self):  # Test na ukoncenie serviceregister s rating 'p'
         login = login_user(self, "+421 900 000003", "test3")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -583,7 +611,7 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0528(self):  # Test na ukoncenie serviceregister s rating 6
+    def test0533(self):  # Test na ukoncenie serviceregister s rating 6
         login = login_user(self, "+421 900 000003", "test3")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -592,11 +620,41 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0529(self):  # Test na ukoncenie serviceregister s neprihlasenym userom
+    def test0534(self):  # Test na ukoncenie serviceregister s rating 6
+        login = login_user(self, "+421 900 000003", "test3")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/serviceregister/2/5/1.1", headers={'Authorization': 'Bearer ' + token})
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0541(self):  # Test na ukoncenie serviceregister s neprihlasenym userom
         tester = app.test_client(self)
         response = tester.put("/api/v1/serviceregister/2/5/3")
         statuscode = response.status_code
         self.assertEqual(statuscode, 401)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0542(self):  # Test na vyhladanie servise podla ratingu
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/find_service_rating?s=1")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 200)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0543(self):  # Test na vyhladanie servise podla ratingu s prilis vysokym ratingom
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/find_service_rating?s=5")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 404)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0544(self):  # Test na vyhladanie servise podla ratingu s nespravnym ratingom
+        tester = app.test_client(self)
+        response = tester.get("/api/v1/find_service_rating?s=p")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
     def test0601(self):  # Test na zmenu udajov v registerservice
@@ -678,7 +736,21 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0625(self):  # Test na zmenu udajov datumu v nespravnom formate
+    def test0625(self):  # Test na zmenu udajov v hodin s prilis velkou hodnotou
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/serviceregister/1",
+                              headers={'Authorization': 'Bearer ' + token}, data=dict(
+                                                                                hours=1.1,
+                                                                                end_time='2020-01-01',
+                                                                                rating=4
+                                                                                ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0631(self):  # Test na zmenu udajov datumu v nespravnom formate
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -692,7 +764,21 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0626(self):  # Test na zmenu udajov ratingu v nespravnom formate
+    def test0632(self):  # Test na zmenu udajov datumu v nespravnom formate
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/serviceregister/1",
+                              headers={'Authorization': 'Bearer ' + token}, data=dict(
+                                                                                hours=1,
+                                                                                end_time='popo-po-po',
+                                                                                rating=4
+                                                                                ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0641(self):  # Test na zmenu udajov ratingu v nespravnom formate
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -706,7 +792,7 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0627(self):  # Test na zmenu udajov ratingu mimo ratingu
+    def test0642(self):  # Test na zmenu udajov ratingu mimo ratingu
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -720,7 +806,7 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0628(self):  # Test na zmenu udajov ratingu mimo ratingu
+    def test0643(self):  # Test na zmenu udajov ratingu mimo ratingu
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -734,7 +820,21 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0629(self):  # Test na zmenu udajov v registerservice s neprihlasenym userom
+    def test0644(self):  # Test na zmenu udajov ratingu mimo ratingu
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/serviceregister/1",
+                              headers={'Authorization': 'Bearer ' + token}, data=dict(
+                                                                                hours=1,
+                                                                                end_time='2020-01-31',
+                                                                                rating=1.1
+                                                                                ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0651(self):  # Test na zmenu udajov v registerservice s neprihlasenym userom
         tester = app.test_client(self)
         response = tester.put("/api/v1/serviceregister/1", data=dict(
                                                                 hours=7,
@@ -853,7 +953,19 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0824(self):  # Test na upravu title s poctom znakov na 1000
+    def test0824(self):  # Test na upravu servisu s estimate s prilis velkou hodnotou
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/service/1", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            title='Testing_edit',
+            estimate=1.1
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0831(self):  # Test na upravu title s poctom znakov na 1000
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -864,7 +976,7 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0825(self):  # Test na upravu service s neprihlasenym pouzivatelom
+    def test0832(self):  # Test na upravu service s neprihlasenym pouzivatelom
         tester = app.test_client(self)
         response = tester.put("/api/v1/service/1", data=dict(
             title='Testing_edit',
@@ -1034,6 +1146,19 @@ class Test(unittest.TestCase):
         self.assertEqual(response.content_type, "application/json")
 
     def test1304(self):  # Edit User s telefonnym cislom v nespravnom tvare
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/user/3", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            phone="+ppp ppp pppppp",
+            user_name='Antonio'
+
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test1311(self):  # Edit User s prilis dlhym username
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']

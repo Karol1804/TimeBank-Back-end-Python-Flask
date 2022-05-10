@@ -74,7 +74,7 @@ sql9 = "INSERT INTO User (phone, user_name, time_account, password)"\
        "260000$AIZ5s2wXaMb1ra8K$89f4fe4c1847290eeb163dec27629da5a1309028f6935abae81b9cfa13a95eb3');"
 
 sql10 = "INSERT INTO Service (title, user_id, estimate)" \
-       "VALUES ('Pokosim travnik', '1', '2');"
+       "VALUES ('Pokosim travnik s motorovou kosackou za polnoci za zvuku vytia vlkov', '1', '2');"
 
 sql11 = "INSERT INTO Service (title, user_id, estimate, avg_rating)" \
        "VALUES ('Vypalim palenku', '1', '8', '4');"
