@@ -310,3 +310,39 @@ def api_service_user_id(user_id):
         app.logger.warning(f"{request.remote_addr}, Service search failed, "
                            f"no service has been found for user with selected id: {user_id}.")
         return '', 404
+
+
+# Vyhladaj z databazy serviceregister podla ratingu ktore sme zadali!!!
+@app.route('/api/v1/find_service_rating', methods=['GET'])
+def find_service_rating():
+
+    search = request.args.get('s')
+    serviceregister_model = db.session.query(Service)
+
+    try:
+        is_number(search)
+    except ValidationError as e:
+        return jsonify({'error': str(e)}), 400
+
+    sort_field, sort_dir, valid = record_sort_params_handler(request.args, Service)
+    if not valid:
+        return '', 400
+    db_objs = get_all_db_objects(sort_field, sort_dir, db.session.query(Service)).all()
+
+    result = []
+
+    for x in db_objs:
+        if x.avg_rating:
+            if x.avg_rating >= int(search):
+                result.append(dict(
+                    id=x.id,
+                    title=x.title,
+                    user_id=x.user_id,
+                    estiamte=x.estimate,
+                    avg_rating=x.avg_rating,
+                ))
+
+    if result:
+        return jsonify(result), 200
+
+    return jsonify({"message": f"No services with {search} and higher rating!"}), 400
