@@ -113,8 +113,9 @@ def api_single_service_put(services_id):
             app.logger.error(f"{request.remote_addr}, Validation error: "
                              f"Updating services failed, estimate is not a number or not in range.")
             return jsonify({'error': str(e)}), 400
-
         db_obj.estimate = req_data['estimate']
+    else:
+        db_obj.estimate = None
 
     try:
         # Prida zmenu do databazy
@@ -229,14 +230,14 @@ def api_service_search():
     field, sort_dir, valid = record_sort_params_handler(request.args, Service)
     if not valid:
         app.logger.warning(f"{request.remote_addr}, Search of services failed, check your request and try again.")
-        return '', 400
+        return jsonify({'error': 'Search of services failed'}), 400
 
     # Z URL hladame kluc[key] "s" a pridame mu jeho hodnotu["value"] ktoru vycitame z URL
     if request.args.get('s'):
         search_string = request.args.get('s')
     else:
         app.logger.warning(f"{request.remote_addr}, Search of services failed, check your request and try again.")
-        return '', 400
+        return jsonify({'error': 'Search of services failed'}), 400
 
     response_obj = []
     # Dlzka hladanej hodnoty musi mat minimalne 3 znaky a viac
