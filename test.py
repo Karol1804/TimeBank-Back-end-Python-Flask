@@ -771,7 +771,19 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0823(self):  # Test na upravu title s poctom znakov na 1000
+    def test0823(self):  # Test na upravu servisu s estimate v nespravnom tvare
+        login = login_user(self, "+421 900 000001", "test1")
+        tester = app.test_client(self)
+        token = login.json['access_token']
+        response = tester.put("/api/v1/service/1", headers={'Authorization': 'Bearer ' + token}, data=dict(
+            title='Testing_edit',
+            estimate=6
+        ))
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 400)
+        self.assertEqual(response.content_type, "application/json")
+
+    def test0824(self):  # Test na upravu title s poctom znakov na 1000
         login = login_user(self, "+421 900 000001", "test1")
         tester = app.test_client(self)
         token = login.json['access_token']
@@ -782,7 +794,7 @@ class Test(unittest.TestCase):
         self.assertEqual(statuscode, 400)
         self.assertEqual(response.content_type, "application/json")
 
-    def test0824(self):  # Test na upravu service
+    def test0825(self):  # Test na upravu service s neprihlasenym pouzivatelom
         tester = app.test_client(self)
         response = tester.put("/api/v1/service/1", data=dict(
             title='Testing_edit',
