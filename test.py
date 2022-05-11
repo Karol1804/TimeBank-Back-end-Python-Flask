@@ -29,7 +29,7 @@ def register_user(self, phone, password, password_val, user_name):
 # Testy
 class Test(unittest.TestCase):
     def test0101(self):  # Vytvor user 1 so spravnymi udajmi
-        response = register_user(self, "+421 900 000001", "test1", "test1", "Testinguser1")
+        response = register_user(self, "+421 900 000000", "test1", "test1", "Testinguser1")
         self.assertEqual(response.content_type, "application/json")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
@@ -582,7 +582,7 @@ class Test(unittest.TestCase):
         response = tester.put("/api/v1/serviceregister/2/p/3", headers={'Authorization': 'Bearer ' + token})
         statuscode = response.status_code
         self.assertEqual(statuscode, 400)
-        self.assertEqual(response.content_type, "application/json")\
+        self.assertEqual(response.content_type, "application/json")
 
     def test0526(self):  # Test na ukoncenie serviceregister s hours 1.1
         login = login_user(self, "+421 900 000003", "test3")
